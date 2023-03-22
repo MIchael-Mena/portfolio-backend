@@ -9,15 +9,17 @@ import java.util.Collection;
 @Getter @Setter
 public class JwtDto {
 
-    private String token;
+    private String accessToken;
+    private String refreshToken;
     private String bearer = "Bearer";
     private String userName;
     private Collection<? extends GrantedAuthority> authorities;
 
-    public JwtDto(String token, String userName, Collection<? extends GrantedAuthority> authorities) {
-        this.token = token;
+    public JwtDto(String accessToken, String refreshToken, String userName, Collection<? extends GrantedAuthority> authorities) {
+        this.accessToken = accessToken;
         this.userName = userName;
         this.authorities = authorities;
+        this.refreshToken = refreshToken;
     }
 
 }

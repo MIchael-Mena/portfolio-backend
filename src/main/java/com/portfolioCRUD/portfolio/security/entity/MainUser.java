@@ -40,7 +40,6 @@ public class MainUser implements UserDetails {
         );
     }
 
-    // ? Significa que puede ser cualquier tipo de dato
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;

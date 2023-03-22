@@ -31,6 +31,14 @@ public class JwtProvider {
                 .compact();
     }
 
+    public String generateTokenFromUsername(String username) {
+        return Jwts.builder().setSubject(username)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(new Date().getTime() + expiration * 1000 ))
+                .signWith(SignatureAlgorithm.HS512, secret)
+                .compact();
+    }
+
     public String getUserNameFromToken(String token) {
         return Jwts.parser()
                 .setSigningKey(secret)
@@ -40,9 +48,6 @@ public class JwtProvider {
     }
 
     public boolean validateToken(String token) {
-/*        if(this.tokenHasExpired(token)){
-            return false;
-        }*/
         try {
             Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
             return true;
@@ -60,13 +65,5 @@ public class JwtProvider {
         return false;
     }
 
-    private boolean tokenHasExpired(String token) {
-        Date expirationDate = Jwts.parser()
-                .setSigningKey(secret)
-                .parseClaimsJws(token)
-                .getBody()
-                .getExpiration();
-        return expirationDate.before(new Date());
-    }
 
 }

@@ -1,6 +1,5 @@
 package com.portfolioCRUD.portfolio.security.jwt;
 
-import com.portfolioCRUD.portfolio.dto.Message;
 import com.portfolioCRUD.portfolio.security.service.UserDetailsServiceImp;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -37,7 +36,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
         } catch (Exception e) {
-            logger.error("Fail en el método doFilterInternal");
+            logger.error("Fail en el método doFilterInternal" + e.getMessage());
             res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
         }
         filterChain.doFilter(req, res);

@@ -1,7 +1,6 @@
 package com.portfolioCRUD.portfolio.security.service;
 
 import com.portfolioCRUD.portfolio.security.entity.MainUser;
-import com.portfolioCRUD.portfolio.security.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,9 +15,14 @@ public class UserDetailsServiceImp implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//        User user = userService.getByUserName(username).get();
-        User user = userService.getByEmail(username).get();
-        return MainUser.build(user);
+        return verifyEmail(username) ?
+                MainUser.build(userService.getByEmail(username).get())
+                :
+                MainUser.build(userService.getByUserName(username).get()
+    }
+
+    private boolean verifyEmail(String email) {
+        return email.contains("@");
     }
 
 

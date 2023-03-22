@@ -17,12 +17,12 @@ public class SocialNetworkController {
     @Autowired
     private SocialNetworkService socialNetworkService;
 
-    ///socialNetworks?order=position&direction=asc
+    ///socialNetworks?_sort=position&_order=asc
     @GetMapping("/socialNetworks")
-    public ResponseEntity<List<SocialNetwork>> getSocialNetworks(@RequestParam(required = false) String order,
-                                                                @RequestParam(required = false) String direction) {
-        if (order != null && direction != null) {
-            if (order.equals("position") && direction.equals("asc")) {
+    public ResponseEntity<List<SocialNetwork>> getSocialNetworks(@RequestParam(required = false) String _sort,
+                                                                @RequestParam(required = false) String _order) {
+        if (_sort != null && _order != null) {
+            if (_sort.equals("position") && _order.equals("asc")) {
                 return ResponseEntity.ok(socialNetworkService.getSocialNetworksByOrderByPositionAsc());
             }
         }
@@ -32,12 +32,7 @@ public class SocialNetworkController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/socialNetworks/create")
     public ResponseEntity<SocialNetwork> saveSocialNetwork(@RequestBody SocialNetwork socialNetwork) {
-        try{
-            socialNetworkService.saveSocialNetwork(socialNetwork);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
-//        socialNetworkService.saveSocialNetwork(socialNetwork);
+        socialNetworkService.saveSocialNetwork(socialNetwork);
         return ResponseEntity.ok(socialNetwork);
     }
 

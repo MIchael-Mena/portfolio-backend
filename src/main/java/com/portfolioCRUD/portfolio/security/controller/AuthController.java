@@ -2,16 +2,12 @@ package com.portfolioCRUD.portfolio.security.controller;
 
 
 import com.portfolioCRUD.portfolio.dto.Message;
-import com.portfolioCRUD.portfolio.security.dto.JwtDto;
-import com.portfolioCRUD.portfolio.security.dto.LoginUser;
-import com.portfolioCRUD.portfolio.security.dto.NewUser;
+import com.portfolioCRUD.portfolio.security.dto.*;
 import com.portfolioCRUD.portfolio.security.entity.RefreshToken;
 import com.portfolioCRUD.portfolio.security.entity.Rol;
 import com.portfolioCRUD.portfolio.security.entity.User;
 import com.portfolioCRUD.portfolio.security.enums.RolName;
 import com.portfolioCRUD.portfolio.security.jwt.JwtProvider;
-import com.portfolioCRUD.portfolio.security.dto.TokenRefreshRequest;
-import com.portfolioCRUD.portfolio.security.dto.TokenRefreshResponse;
 import com.portfolioCRUD.portfolio.security.service.RefreshTokenService;
 import com.portfolioCRUD.portfolio.security.service.RolService;
 import com.portfolioCRUD.portfolio.security.service.UserService;
@@ -30,6 +26,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
 import java.util.Set;
+
+// Se logea con el username o el email, el token contiene el username
 
 @RestController
 @RequestMapping("/auth")
@@ -54,7 +52,7 @@ public class AuthController {
     @Autowired
     RefreshTokenService refreshTokenService;
 
-    @PostMapping("/new")
+    @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody NewUser newUser, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().body(new Message("Campos o email incorrectos"));
@@ -74,7 +72,7 @@ public class AuthController {
         }
         user.setRoles(roles);
         userService.save(user);
-        return ResponseEntity.created(null).body(new Message("Usuario creado"));
+        return ResponseEntity.ok(new Message("Usuario creado"));
     }
 
     @PostMapping("/login")
@@ -83,23 +81,26 @@ public class AuthController {
             return ResponseEntity.badRequest().body(new Message("Campos incorrectos"));
         }
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginUser.getEmail(), loginUser.getPassword()));
+                new UsernamePasswordAuthenticationToken(loginUser.getUserName(), loginUser.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtProvider.generateToken(authentication);
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-//        Long userId = userService.getByUserName(loginUser.getUserName()).get().getId();
-        Long userId = userService.getByEmail(loginUser.getEmail()).get().getId();
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userId);
+        User user = this.getUser(loginUser.getUserName());
 
-        JwtDto jwtDto = new JwtDto(jwt, refreshToken.getToken(), userDetails.getUsername(), userDetails.getAuthorities());
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
+
+        UserResponse userResponse = new UserResponse(user.getUserName(), user.getEmail(), user.getId());
+
+        JwtDto jwtDto = new JwtDto(jwt, refreshToken.getToken(), userResponse, userDetails.getAuthorities());
+
         return ResponseEntity.ok(jwtDto);
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestParam Long userId) {
+    @GetMapping("/logout")
+    public ResponseEntity<Message> logout(@RequestParam Long userId) {
         refreshTokenService.deleteByUserId(userId);
-        return ResponseEntity.ok(new Message("Refresh token deleted successfully!"));
+        return ResponseEntity.ok(new Message("Logout exitoso"));
     }
 
     @PostMapping("/refreshToken")
@@ -114,7 +115,12 @@ public class AuthController {
                     return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
                 })
                 .orElseThrow(() -> new TokenRefreshException(requestRefreshToken,
-                        "Refresh token is not in database!"));
+                        "Refresh token invalido o expirado. Por favor, inicie sesión nuevamente"));
+    }
+
+    private User getUser(String username){
+        return username.contains("@") ?
+                userService.getByEmail(username).get() : userService.getByUserName(username).get();
     }
 
 

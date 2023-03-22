@@ -81,8 +81,11 @@ public class MainSecurity{
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins("http://localhost:8080")
+                        .allowedOrigins("http://localhost:4200")
                         .allowedMethods("GET", "POST", "PUT", "DELETE","PATCH")
-                        .allowedHeaders("*")
+                        .allowedHeaders("Authorization", "Content-Type",
+                                "X-Requested-With", "accept", "Origin",
+                                "Access-Control-Request-Method", "Access-Control-Request-Headers")
                         .allowCredentials(true);
             }
         };

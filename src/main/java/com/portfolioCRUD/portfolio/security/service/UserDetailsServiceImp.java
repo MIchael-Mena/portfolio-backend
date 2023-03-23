@@ -18,7 +18,7 @@ public class UserDetailsServiceImp implements UserDetailsService {
         return verifyEmail(username) ?
                 MainUser.build(userService.getByEmail(username).get())
                 :
-                MainUser.build(userService.getByUserName(username).get()
+                MainUser.build(userService.getByUserName(username).get());
     }
 
     private boolean verifyEmail(String email) {

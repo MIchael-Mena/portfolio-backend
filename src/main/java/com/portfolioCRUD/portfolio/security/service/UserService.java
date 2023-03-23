@@ -8,8 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-
-//Transaction management is a process of managing all the database transactions in an application.
 @Service
 @Transactional
 public class UserService {

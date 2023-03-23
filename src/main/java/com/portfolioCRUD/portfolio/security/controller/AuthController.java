@@ -28,7 +28,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 // Se logea con el username o el email, el token contiene el username
-
 @RestController
 @RequestMapping("/auth")
 @CrossOrigin

@@ -6,14 +6,14 @@ import java.util.List;
 
 public interface IWorkService {
 
-    public List<Work> getWorks();
+    List<Work> getWorks();
 
-    public List<Work> getWorksByOrderByPositionAsc();
+    List<Work> getWorksByOrderByPositionAsc();
 
-    public void saveWork(Work work);
+    void saveWork(Work work);
 
-    public void deleteWork(Long id);
+    void deleteWork(Long id);
 
-    public Work findWork(Long id);
+    Work findWork(Long id);
 
 }

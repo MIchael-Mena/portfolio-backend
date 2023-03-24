@@ -11,29 +11,22 @@ import lombok.Setter;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Work {
+public class Skill {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(nullable = false)
-    private String job;
+    private String name;
 
     @Column(nullable = false)
-    private String company;
-
-    @Column(length = 410)
-    private String description;
-
-    @Column(nullable = false, columnDefinition = "DATE")
-    private String initialDate;
-
-    @Column(columnDefinition = "DATE")
-    private String finalDate;
-    private String link;
+    private Integer level;
 
     @Column(nullable = false)
     private Integer position;
+
+    @Column(nullable = false, columnDefinition = "LONGTEXT")
+    private String icon;
 
 }

@@ -6,13 +6,13 @@ import java.util.List;
 
 public interface ISocialNetworkService {
 
-    public List<SocialNetwork> getSocialNetworks();
+    List<SocialNetwork> getSocialNetworks();
 
-    public List<SocialNetwork> getSocialNetworksByOrderByPositionAsc();
+    List<SocialNetwork> getSocialNetworksByOrderByPositionAsc();
 
-    public void saveSocialNetwork(SocialNetwork socialNetwork);
+    void saveSocialNetwork(SocialNetwork socialNetwork);
 
-    public void deleteSocialNetwork(Long id);
+    void deleteSocialNetwork(Long id);
 
-    public SocialNetwork findSocialNetwork(Long id);
+    SocialNetwork findSocialNetwork(Long id);
 }

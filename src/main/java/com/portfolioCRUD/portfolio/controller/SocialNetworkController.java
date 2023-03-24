@@ -12,13 +12,14 @@ import java.util.List;
 
 @RestController
 @NoArgsConstructor
+@RequestMapping("/socialNetworks")
 public class SocialNetworkController {
 
     @Autowired
     private SocialNetworkService socialNetworkService;
 
     ///socialNetworks?_sort=position&_order=asc
-    @GetMapping("/socialNetworks")
+    @GetMapping("")
     public ResponseEntity<List<SocialNetwork>> getSocialNetworks(@RequestParam(required = false) String _sort,
                                                                 @RequestParam(required = false) String _order) {
         if (_sort != null && _order != null) {
@@ -30,27 +31,27 @@ public class SocialNetworkController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/socialNetworks/create")
+    @PostMapping("/create")
     public ResponseEntity<SocialNetwork> saveSocialNetwork(@RequestBody SocialNetwork socialNetwork) {
         socialNetworkService.saveSocialNetwork(socialNetwork);
         return ResponseEntity.ok(socialNetwork);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/socialNetworks/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteSocialNetwork(@PathVariable Long id) {
 
         socialNetworkService.deleteSocialNetwork(id);
         return ResponseEntity.ok("Social Network deleted");
     }
 
-    @GetMapping("/socialNetworks/{id}")
+    @GetMapping("/{id}")
     public SocialNetwork findSocialNetwork(@PathVariable Long id) {
         return socialNetworkService.findSocialNetwork(id);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/socialNetworks/edit/{id}")
+    @PutMapping("/edit/{id}")
     public ResponseEntity<SocialNetwork> editSocialNetwork(@PathVariable Long id, @RequestBody SocialNetwork socialNetwork) {
         SocialNetwork socialNetworkToUpdate = socialNetworkService.findSocialNetwork(id);
         socialNetworkToUpdate.setName(socialNetwork.getName());
@@ -61,7 +62,7 @@ public class SocialNetworkController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PatchMapping("/socialNetworks/update/{id}")
+    @PatchMapping("/update/{id}")
     public ResponseEntity<SocialNetwork> updateSocialNetwork(@PathVariable Long id, @RequestBody SocialNetwork socialNetwork) {
         SocialNetwork socialNetworkToUpdate = socialNetworkService.findSocialNetwork(id);
         if (socialNetwork.getName() != null) {
@@ -72,6 +73,9 @@ public class SocialNetworkController {
         }
         if (socialNetwork.getPosition() != null) {
             socialNetworkToUpdate.setPosition(socialNetwork.getPosition());
+        }
+        if (socialNetwork.getIcon() != null) {
+            socialNetworkToUpdate.setIcon(socialNetwork.getIcon());
         }
         socialNetworkService.saveSocialNetwork(socialNetworkToUpdate);
         return ResponseEntity.ok(socialNetworkToUpdate);

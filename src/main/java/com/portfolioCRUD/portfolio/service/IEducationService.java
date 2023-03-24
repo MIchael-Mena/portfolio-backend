@@ -6,14 +6,14 @@ import java.util.List;
 
 public interface IEducationService {
 
-    public List<Education> getEducations();
+    List<Education> getEducations();
 
-    public List<Education> getEducationsByOrderByPositionAsc();
+    List<Education> getEducationsByOrderByPositionAsc();
 
-    public void saveEducation(Education education);
+    void saveEducation(Education education);
 
-    public void deleteEducation(Long id);
+    void deleteEducation(Long id);
 
-    public Education findEducation(Long id);
+    Education findEducation(Long id);
 
 }

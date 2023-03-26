@@ -25,6 +25,16 @@ public class WorkController {
         if (_sort != null && _order != null) {
             if (_sort.equals("position") && _order.equals("asc")) {
                 return ResponseEntity.ok(workService.getWorksByOrderByPositionAsc());
+            } else if (_sort.equals("position") && _order.equals("desc")) {
+//                return ResponseEntity.ok(workService.getWorksByOrderByPositionDesc());
+            } else if (_sort.equals("initialDate") && _order.equals("asc")) {
+//                return ResponseEntity.ok(workService.getWorksByOrderByInitialDateAsc());
+            } else if (_sort.equals("initialDate") && _order.equals("desc")) {
+                return ResponseEntity.ok(workService.getWorksByOrderByInitialDateDesc());
+            } else if (_sort.equals("finalDate") && _order.equals("asc")) {
+//                return ResponseEntity.ok(workService.getWorksByOrderByFinalDateAsc());
+            } else if (_sort.equals("finalDate") && _order.equals("desc")) {
+//                return ResponseEntity.ok(workService.getWorksByOrderByFinalDateDesc());
             }
         }
         return ResponseEntity.ok(workService.getWorks());
@@ -69,17 +79,13 @@ public class WorkController {
         Work workToUpdate = workService.findWork(id);
         if (work.getJob() != null) {
             workToUpdate.setJob(work.getJob());
-        }
-        if (work.getCompany() != null) {
+        } else if (work.getCompany() != null) {
             workToUpdate.setCompany(work.getCompany());
-        }
-        if (work.getDescription() != null) {
+        } else if (work.getDescription() != null) {
             workToUpdate.setDescription(work.getDescription());
-        }
-        if (work.getLink() != null) {
+        } else if (work.getLink() != null) {
             workToUpdate.setLink(work.getLink());
-        }
-        if (work.getPosition() != null) {
+        } else if (work.getPosition() != null) {
             workToUpdate.setPosition(work.getPosition());
         }
         workService.saveWork(workToUpdate);

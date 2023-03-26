@@ -12,8 +12,13 @@ import com.portfolioCRUD.portfolio.security.service.RefreshTokenService;
 import com.portfolioCRUD.portfolio.security.service.RolService;
 import com.portfolioCRUD.portfolio.security.service.UserService;
 import com.portfolioCRUD.portfolio.security.exception.TokenRefreshException;
+import com.portfolioCRUD.portfolio.security.util.CookieUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,8 +28,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.WebUtils;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 // Se logea con el username o el email, el token contiene el username
@@ -35,32 +42,31 @@ public class AuthController {
 
     @Autowired
     PasswordEncoder passwordEncoder;
-
     @Autowired
     AuthenticationManager authenticationManager;
-
     @Autowired
     UserService userService;
-
     @Autowired
     RolService rolService;
-
     @Autowired
     JwtProvider jwtProvider;
-
     @Autowired
     RefreshTokenService refreshTokenService;
+    @Value("${jwt.accessTokenCookieName}")
+    private String accessTokenCookieName;
+    @Value("${jwt.refreshTokenCookieName}")
+    private String refreshTokenCookieName;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody NewUser newUser, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body(new Message("Campos o email incorrectos"));
+            return ResponseEntity.badRequest().body(new Message("Something went wrong"));
         }
         if (userService.existsByUserName(newUser.getUserName())) {
-            return ResponseEntity.badRequest().body(new Message("El nombre de usuario ya existe"));
+            return ResponseEntity.badRequest().body(new Message("The username already exists"));
         }
         if (userService.existsByEmail(newUser.getEmail())) {
-            return ResponseEntity.badRequest().body(new Message("El email ya existe"));
+            return ResponseEntity.badRequest().body(new Message("The email already exists"));
         }
         User user = new User(newUser.getName(), newUser.getUserName(), newUser.getEmail(),
                 passwordEncoder.encode(newUser.getPassword()));
@@ -71,41 +77,101 @@ public class AuthController {
         }
         user.setRoles(roles);
         userService.save(user);
-        return ResponseEntity.ok(new Message("Usuario creado"));
+        return ResponseEntity.ok(new Message("User created"));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginUser loginUser, BindingResult bindingResult) {
+    public ResponseEntity<Object> login(HttpServletResponse response,
+                                   @Valid @RequestBody LoginUser loginUser, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body(new Message("Campos incorrectos"));
+            return ResponseEntity.badRequest().body(new Message("Username or password incorrect"));
         }
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginUser.getUserName(), loginUser.getPassword()));
+                new UsernamePasswordAuthenticationToken(loginUser.getUsername(), loginUser.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
         String jwt = jwtProvider.generateToken(authentication);
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        User user = this.getUser(loginUser.getUserName());
-
+        User user = this.getUser(loginUser.getUsername());
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
+        UserResponse userResponse = new UserResponse(user.getId(), user.getUserName(),
+                user.getEmail(), userDetails.getAuthorities());
 
-        UserResponse userResponse = new UserResponse(user.getUserName(), user.getEmail(), user.getId());
+        CookieUtil.create(response, accessTokenCookieName, jwt, false, -1, "localhost", "/");
+        CookieUtil.create(response, refreshTokenCookieName, refreshToken.getToken(),
+                false, -1, "localhost", "/auth");
 
-        JwtDto jwtDto = new JwtDto(jwt, refreshToken.getToken(), userResponse, userDetails.getAuthorities());
+//        JwtDto jwtDto = new JwtDto(jwt, refreshToken.getToken(), userResponse, userDetails.getAuthorities());
 
-        return ResponseEntity.ok(jwtDto);
+        return ResponseEntity.ok( userResponse );
+    }
+
+    @GetMapping("/details")
+    public ResponseEntity<?> getUserDetails() {
+        try {
+            UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String username = userDetails.getUsername();
+            Optional<User> user = userService.getByUserName(username);
+            // User contiene el password, no se debe devolver
+            if (user.isPresent()) {
+                UserResponse userResponse = new UserResponse(user.get().getId(), user.get().getUserName(),
+                        user.get().getEmail(), userDetails.getAuthorities());
+                return ResponseEntity.ok(userResponse);
+            } else {
+                return ResponseEntity.badRequest().body(new Message("User not found"));
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<Message>(new Message("Something went wrong"), HttpStatus.UNAUTHORIZED);
+        }
     }
 
     @GetMapping("/logout")
-    public ResponseEntity<Message> logout(@RequestParam Long userId) {
-        refreshTokenService.deleteByUserId(userId);
-        return ResponseEntity.ok(new Message("Logout exitoso"));
+    public ResponseEntity<Message> logout(HttpServletResponse response,
+                                          HttpServletRequest request) {
+//        @CookieValue(name = "refreshToken") String requestRefreshToken
+        try {
+            String requestRefreshToken = WebUtils.getCookie(request, refreshTokenCookieName).getValue();
+            refreshTokenService.deleteByToken(requestRefreshToken);
+            CookieUtil.clear(response, accessTokenCookieName);
+            CookieUtil.clear(response, refreshTokenCookieName);
+
+            return ResponseEntity.ok(new Message("Logout successful"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new Message("Something went wrong"));
+        }
     }
 
-    @PostMapping("/refreshToken")
+/*    @GetMapping("/logout")
+    public ResponseEntity<Message> logout(@RequestParam Long userId) {
+        refreshTokenService.deleteByUserId(userId);
+        return ResponseEntity.ok(new Message("Logout successful"));
+    }*/
+
+    @GetMapping("/refresh-token")
+    public ResponseEntity<Message> refreshToken(HttpServletResponse response, HttpServletRequest request) {
+        String requestRefreshToken = WebUtils.getCookie(request, refreshTokenCookieName).getValue();
+        if(requestRefreshToken == null) {
+            return ResponseEntity.badRequest().body(new Message("Refresh token is missing"));
+        }
+        return refreshTokenService.findByToken(requestRefreshToken)
+                .map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getUser)
+                .map(user -> {
+                    System.out.println("userId: " + user.getId());
+                    String token = jwtProvider.generateTokenFromUsername(user.getUserName());
+//                    CookieUtil.clear(response, accessTokenCookieName);
+                    CookieUtil.create(response, accessTokenCookieName, token,
+                            false, -1, "localhost", "/");
+                    return ResponseEntity.ok(new Message("Token refreshed successfully"));
+                })
+                .orElseThrow(() -> new TokenRefreshException("Refresh token",
+                        "Invalid or expired. Please issue a new login request"));
+    }
+
+/*    @PostMapping("/refreshToken")
     public ResponseEntity<?> refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
         String requestRefreshToken = request.getRefreshToken();
-
         return refreshTokenService.findByToken(requestRefreshToken)
                 .map(refreshTokenService::verifyExpiration)
                 .map(RefreshToken::getUser)
@@ -114,8 +180,8 @@ public class AuthController {
                     return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
                 })
                 .orElseThrow(() -> new TokenRefreshException(requestRefreshToken,
-                        "Refresh token invalido o expirado. Por favor, inicie sesión nuevamente"));
-    }
+                        "Refresh token invalid or expired. Please issue a new request"));
+    }*/
 
     private User getUser(String username){
         return username.contains("@") ?

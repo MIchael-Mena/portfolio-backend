@@ -10,6 +10,8 @@ public interface IEducationService {
 
     List<Education> getEducationsByOrderByPositionAsc();
 
+    List<Education> getEducationsByOrderByInitialDateDesc();
+
     void saveEducation(Education education);
 
     void deleteEducation(Long id);

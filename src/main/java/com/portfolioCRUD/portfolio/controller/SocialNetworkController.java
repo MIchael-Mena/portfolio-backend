@@ -1,5 +1,6 @@
 package com.portfolioCRUD.portfolio.controller;
 
+import com.portfolioCRUD.portfolio.dto.Message;
 import com.portfolioCRUD.portfolio.model.SocialNetwork;
 import com.portfolioCRUD.portfolio.service.SocialNetworkService;
 import lombok.NoArgsConstructor;
@@ -39,10 +40,9 @@ public class SocialNetworkController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteSocialNetwork(@PathVariable Long id) {
-
+    public ResponseEntity<Message> deleteSocialNetwork(@PathVariable Long id) {
         socialNetworkService.deleteSocialNetwork(id);
-        return ResponseEntity.ok("Social Network deleted");
+        return ResponseEntity.ok(new Message("SocialNetwork deleted"));
     }
 
     @GetMapping("/{id}")

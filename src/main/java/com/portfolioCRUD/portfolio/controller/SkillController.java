@@ -1,9 +1,11 @@
 package com.portfolioCRUD.portfolio.controller;
 
+import com.portfolioCRUD.portfolio.dto.Message;
 import com.portfolioCRUD.portfolio.model.Skill;
 import com.portfolioCRUD.portfolio.service.SkillService;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,51 +20,51 @@ public class SkillController {
     SkillService skillService;
 
     @GetMapping("")
-    public List<Skill> getSkill(@RequestParam(required = false) String _sort,
+    public ResponseEntity<List<Skill>> getSkill(@RequestParam(required = false) String _sort,
                                 @RequestParam(required = false) String _order) {
         if (_sort != null && _order != null) {
             if (_sort.equals("position") && _order.equals("asc")) {
-                return skillService.getSkillsByOrderByPositionAsc();
+                return ResponseEntity.ok(skillService.getSkillsByOrderByPositionAsc());
             }
         }
-        return skillService.getSkills();
+        return ResponseEntity.ok(skillService.getSkills());
     }
 
     @GetMapping("/{id}")
-    public Skill findSkill(@PathVariable Long id) {
-        return skillService.findSkill(id);
+    public ResponseEntity<Skill> findSkill(@PathVariable Long id) {
+        return ResponseEntity.ok(skillService.findSkill(id));
     }
 
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
-    public Skill saveSkill(@RequestBody Skill skill) {
+    public ResponseEntity<Skill> saveSkill(@RequestBody Skill skill) {
         skillService.saveSkill(skill);
-        return skill;
+        return ResponseEntity.ok(skill);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{id}")
-    public String deleteSkill(@PathVariable Long id) {
+    public ResponseEntity<Message> deleteSkill(@PathVariable Long id) {
         skillService.deleteSkill(id);
-        return "Skill deleted";
+        return ResponseEntity.ok(new Message("Skill deleted"));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/edit/{id}")
-    public Skill editSkill(@PathVariable Long id, @RequestBody Skill skill) {
+    public ResponseEntity<Skill> editSkill(@PathVariable Long id, @RequestBody Skill skill) {
         Skill skillToUpdate = skillService.findSkill(id);
         skillToUpdate.setName(skill.getName());
         skillToUpdate.setLevel(skill.getLevel());
         skillToUpdate.setPosition(skill.getPosition());
         skillToUpdate.setIcon(skill.getIcon());
         skillService.saveSkill(skillToUpdate);
-        return skillToUpdate;
+        return ResponseEntity.ok(skillToUpdate);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/update/{id}")
-    public Skill updateSkill(@PathVariable Long id, @RequestBody Skill skill) {
+    public ResponseEntity<Skill> updateSkill(@PathVariable Long id, @RequestBody Skill skill) {
         Skill skillToUpdate = skillService.findSkill(id);
         if (skill.getName() != null) {
             skillToUpdate.setName(skill.getName());
@@ -77,7 +79,7 @@ public class SkillController {
             skillToUpdate.setIcon(skill.getIcon());
         }
         skillService.saveSkill(skillToUpdate);
-        return skillToUpdate;
+        return ResponseEntity.ok(skillToUpdate);
     }
 
 

@@ -18,22 +18,22 @@ public class AboutMeController {
     AboutMeService aboutMeService;
 
     @GetMapping("")
-    public AboutMe getAboutMe() {
-        return aboutMeService.getAboutMe();
+    public ResponseEntity<AboutMe> getAboutMe() {
+        return ResponseEntity.ok(aboutMeService.getAboutMe());
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/update")
     public ResponseEntity<Message> updateAboutMe(@RequestBody AboutMe aboutMe) {
         AboutMe aboutMeToUpdate = aboutMeService.getAboutMe();
-        if(aboutMe.getName() == null) {
-            aboutMeToUpdate.setName(aboutMeService.getAboutMe().getName());
-        } else if (aboutMe.getTitle() == null) {
-            aboutMeToUpdate.setTitle(aboutMeService.getAboutMe().getTitle());
-        } else if (aboutMe.getDescription() == null) {
-            aboutMeToUpdate.setDescription(aboutMeService.getAboutMe().getDescription());
-        } else if (aboutMe.getPhoto() == null) {
-            aboutMeToUpdate.setPhoto(aboutMeService.getAboutMe().getPhoto());
+        if(aboutMe.getName() != null) {
+            aboutMeToUpdate.setName(aboutMe.getName());
+        } else if ( aboutMe.getDescription() != null) {
+            aboutMeToUpdate.setDescription(aboutMe.getDescription());
+        } else if ( aboutMe.getPhoto() != null) {
+            aboutMeToUpdate.setPhoto(aboutMe.getPhoto());
+        } else if ( aboutMe.getTitle() != null) {
+            aboutMeToUpdate.setTitle(aboutMe.getTitle());
         }
         aboutMeService.saveAboutMe(aboutMeToUpdate);
         return ResponseEntity.ok( new Message("About me updated"));

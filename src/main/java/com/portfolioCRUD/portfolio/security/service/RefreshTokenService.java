@@ -50,7 +50,15 @@ public class RefreshTokenService {
 
     @Transactional
     public int deleteByUserId(Long userId) {
+        // Elimina todos los refresh tokens de un usuario
         return refreshTokenRepository.deleteByUser(userRepository.findById(userId).get());
+    }
+
+    @Transactional
+    public int deleteByToken(String token) {
+        // Elimina un refresh token
+        // Si el usuario se loguea varias veces y no se cierra la sesion, podrian quedar varios refresh tokens
+        return refreshTokenRepository.deleteByToken(token);
     }
 
 }

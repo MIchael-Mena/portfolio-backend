@@ -9,7 +9,7 @@ import lombok.Setter;
 public class LoginUser {
 
     @NotBlank
-    private String userName;
+    private String username;
     @NotBlank
     private String password;
 

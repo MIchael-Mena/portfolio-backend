@@ -16,12 +16,17 @@ public class EducationService implements IEducationService {
 
     @Override
     public List<Education> getEducations() {
-        return (List<Education>) educationRepository.findAll();
+        return educationRepository.findAll();
     }
 
     @Override
     public List<Education> getEducationsByOrderByPositionAsc() {
-        return (List<Education>) educationRepository.findAllByOrderByPositionAsc();
+        return educationRepository.findAllByOrderByPositionAsc();
+    }
+
+    @Override
+    public List<Education> getEducationsByOrderByInitialDateDesc() {
+        return educationRepository.findAllByOrderByInitialDateDesc();
     }
 
     @Override

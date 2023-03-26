@@ -10,6 +10,8 @@ public interface IWorkService {
 
     List<Work> getWorksByOrderByPositionAsc();
 
+    List<Work> getWorksByOrderByInitialDateDesc();
+
     void saveWork(Work work);
 
     void deleteWork(Long id);

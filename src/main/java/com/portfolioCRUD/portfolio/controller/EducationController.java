@@ -25,6 +25,16 @@ public class EducationController {
         if (_sort != null && _order != null) {
             if (_sort.equals("position") && _order.equals("asc")) {
                 return ResponseEntity.ok(educationService.getEducationsByOrderByPositionAsc());
+            } else if (_sort.equals("position") && _order.equals("desc")) {
+//                return ResponseEntity.ok(educationService.getEducationsByOrderByPositionDesc());
+            } else if (_sort.equals("initialDate") && _order.equals("asc")) {
+//                return ResponseEntity.ok(educationService.getEducationsByOrderByInitialDateAsc());
+            } else if (_sort.equals("initialDate") && _order.equals("desc")) {
+                return ResponseEntity.ok(educationService.getEducationsByOrderByInitialDateDesc());
+            } else if (_sort.equals("finalDate") && _order.equals("asc")) {
+//                return ResponseEntity.ok(educationService.getEducationsByOrderByFinalDateAsc());
+            } else if (_sort.equals("finalDate") && _order.equals("desc")) {
+//                return ResponseEntity.ok(educationService.getEducationsByOrderByFinalDateDesc());
             }
         }
         return ResponseEntity.ok(educationService.getEducations());
@@ -68,17 +78,13 @@ public class EducationController {
         Education educationToUpdate = educationService.findEducation(id);
         if (education.getTitle() != null) {
             educationToUpdate.setTitle(education.getTitle());
-        }
-        if (education.getInstitution() != null) {
+        } else if (education.getInstitution() != null) {
             educationToUpdate.setInstitution(education.getInstitution());
-        }
-        if (education.getInitialDate() != null) {
+        } else if (education.getInitialDate() != null) {
             educationToUpdate.setInitialDate(education.getInitialDate());
-        }
-        if (education.getFinalDate() != null) {
+        } else if (education.getFinalDate() != null) {
             educationToUpdate.setFinalDate(education.getFinalDate());
-        }
-        if (education.getPosition() != null) {
+        } else if (education.getPosition() != null) {
             educationToUpdate.setPosition(education.getPosition());
         }
         educationService.saveEducation(educationToUpdate);

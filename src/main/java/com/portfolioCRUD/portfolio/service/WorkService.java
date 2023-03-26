@@ -15,12 +15,17 @@ public class WorkService implements IWorkService {
 
     @Override
     public List<Work> getWorks() {
-        return (List<Work>) workRepository.findAll();
+        return workRepository.findAll();
     }
 
     @Override
     public List<Work> getWorksByOrderByPositionAsc() {
-        return (List<Work>) workRepository.findAllByOrderByPositionAsc();
+        return workRepository.findAllByOrderByPositionAsc();
+    }
+    
+    @Override
+    public List<Work> getWorksByOrderByInitialDateDesc() {
+        return workRepository.findAllByOrderByInitialDateDesc();
     }
 
     @Override

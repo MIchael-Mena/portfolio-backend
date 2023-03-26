@@ -13,7 +13,6 @@ public class JwtDto {
     private String refreshToken;
     private String bearer = "Bearer";
     private UserResponse user;
-
     private Collection<? extends GrantedAuthority> authorities;
 
     public JwtDto(String accessToken, String refreshToken, UserResponse userRes, Collection<? extends GrantedAuthority> authorities) {

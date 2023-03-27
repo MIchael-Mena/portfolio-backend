@@ -75,7 +75,8 @@ public class MainSecurity{
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins("https://portfolio-99e5b.web.app","http://localhost:4200",
-                                "http://localhost:8080","portfolio-backend.portfolio.koyeb")
+                                "http://localhost:8080","portfolio-backend.portfolio.koyeb",
+                                "https://portfolio-spring-boot.onrender.com")
                         .allowedMethods("GET", "POST", "PUT", "DELETE","PATCH", "OPTIONS")
                         .allowedHeaders("Authorization", "Content-Type",
                                 "X-Requested-With", "accept", "Origin",

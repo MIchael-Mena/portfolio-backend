@@ -2,7 +2,6 @@ package com.portfolioCRUD.portfolio.security;
 
 import com.portfolioCRUD.portfolio.security.jwt.JwtEntryPoint;
 import com.portfolioCRUD.portfolio.security.jwt.JwtTokenFilter;
-import com.portfolioCRUD.portfolio.security.service.UserDetailsServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,8 +23,6 @@ import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.util.List;
-
 
 // WebSecurityConfigurerAdapter Deprecated
 //@EnableGlobalMethodSecurity(prePostEnabled = true) Deprecated
@@ -35,9 +32,6 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 public class MainSecurity{
-
-/*    @Autowired
-    private UserDetailsServiceImp userDetailsService;*/
 
     @Autowired
     private JwtEntryPoint jwtEntryPoint;
@@ -85,7 +79,7 @@ public class MainSecurity{
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:4200", "http://localhost:8080")
+                        .allowedOrigins("**")
                         .allowedMethods("GET", "POST", "PUT", "DELETE","PATCH", "OPTIONS")
                         .allowedHeaders("Authorization", "Content-Type",
                                 "X-Requested-With", "accept", "Origin",

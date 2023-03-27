@@ -1,3 +1,4 @@
-FROM amazoncorretto:11-alpine-jdk
-MAINTAINER emaaristimuno COPY target/NAME-YOUR-FILE-BUILD-SPRINGBOOT.jar NAME-YOUR-FILE-BUILD-SPRINGBOOT.jar
-ENTRYPOINT ["java","-jar","/NAME-YOUR-FILE-BUILD-SPRINGBOOT.jar"]
+FROM amazoncorretto:17.0.5
+MAINTAINER MichaelMena
+COPY portfolio-backend.jar portfolio-backend.jar
+ENTRYPOINT ["java","-jar","/portfolio-backend.jar]

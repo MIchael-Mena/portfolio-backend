@@ -79,7 +79,7 @@ public class MainSecurity{
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("**")
+                        .allowedOrigins("https://portfolio-99e5b.web.app/about", "portfolio-backend.portfolio.koyeb","http://localhost:8000")
                         .allowedMethods("GET", "POST", "PUT", "DELETE","PATCH", "OPTIONS")
                         .allowedHeaders("Authorization", "Content-Type",
                                 "X-Requested-With", "accept", "Origin",

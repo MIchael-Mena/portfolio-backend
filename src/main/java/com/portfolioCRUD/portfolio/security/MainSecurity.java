@@ -3,7 +3,6 @@ package com.portfolioCRUD.portfolio.security;
 import com.portfolioCRUD.portfolio.security.jwt.JwtEntryPoint;
 import com.portfolioCRUD.portfolio.security.jwt.JwtTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -32,11 +31,6 @@ public class MainSecurity{
 
     @Autowired
     private JwtEntryPoint jwtEntryPoint;
-/*    @Value("${server.domain}")
-    private String domain;
-    @Value("${frontend.domain}")
-    private String frontendDomain;*/
-
     @Bean
     public JwtTokenFilter jwtTokenFilter() {
         return new JwtTokenFilter();

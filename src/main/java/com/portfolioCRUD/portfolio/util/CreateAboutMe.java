@@ -1,6 +1,6 @@
 package com.portfolioCRUD.portfolio.util;
 
-import com.portfolioCRUD.portfolio.model.AboutMe;
+/*import com.portfolioCRUD.portfolio.model.AboutMe;
 import com.portfolioCRUD.portfolio.service.AboutMeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -24,4 +24,4 @@ public class CreateAboutMe implements CommandLineRunner {
         }
     }
 
-}
+}*/

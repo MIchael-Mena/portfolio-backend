@@ -2,12 +2,16 @@ package com.portfolioCRUD.portfolio.security.util;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CookieUtil {
 
-    public static void create(HttpServletResponse res, String name, String value, boolean secure, int maxAge, String domain, String path) {
+    @Value("${server.domain}")
+    private static String domain;
+
+    public static void create(HttpServletResponse res, String name, String value, boolean secure, int maxAge, String path) {
         Cookie cookie = new Cookie(name, value);
         cookie.setSecure(secure);
         cookie.setHttpOnly(true);
@@ -18,7 +22,7 @@ public class CookieUtil {
     }
 
     public static void clear(HttpServletResponse res, String name) {
-        create(res, name, "", false, 0, "localhost", "/");
+        create(res, name, "", false, 0, "/");
     }
 
 }

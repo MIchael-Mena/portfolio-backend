@@ -8,12 +8,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class AboutMeService implements IAboutMeService {
 
-    final AboutMeRepository aboutMeRepository;
-
     @Autowired
-    public AboutMeService(AboutMeRepository aboutMeRepository) {
-        this.aboutMeRepository = aboutMeRepository;
-    }
+    AboutMeRepository aboutMeRepository;
 
     @Override
     public void saveAboutMe(AboutMe aboutMe) {

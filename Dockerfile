@@ -1,4 +1,4 @@
-FROM openjdk:20
+FROM openjdk:20-jdk
 MAINTAINER MichaelMena
 COPY target/portfolio-backend.jar portfolio-backend.jar
 EXPOSE 8080

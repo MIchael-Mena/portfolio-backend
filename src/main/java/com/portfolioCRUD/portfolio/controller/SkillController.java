@@ -16,8 +16,12 @@ import java.util.List;
 @RequestMapping("/skills")
 public class SkillController {
 
-    @Autowired
     SkillService skillService;
+
+    @Autowired
+    public SkillController(SkillService skillService) {
+        this.skillService = skillService;
+    }
 
     @GetMapping("")
     public ResponseEntity<List<Skill>> getSkill(@RequestParam(required = false) String _sort,

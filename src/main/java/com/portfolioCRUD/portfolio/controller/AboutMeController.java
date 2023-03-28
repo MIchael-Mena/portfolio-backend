@@ -14,8 +14,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/aboutMe")
 public class AboutMeController {
 
-    @Autowired
     AboutMeService aboutMeService;
+
+    @Autowired
+    public AboutMeController(AboutMeService aboutMeService) {
+        this.aboutMeService = aboutMeService;
+    }
 
     @GetMapping("")
     public ResponseEntity<AboutMe> getAboutMe() {

@@ -34,28 +34,37 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-// Se logea con el username o el email, el token contiene el username
+// Se registra con el username o el email, el token contiene el username
 @RestController
 @RequestMapping("/auth")
 @CrossOrigin
 public class AuthController {
 
-    @Autowired
+    final
     PasswordEncoder passwordEncoder;
-    @Autowired
+    final
     AuthenticationManager authenticationManager;
-    @Autowired
+    final
     UserService userService;
-    @Autowired
+    final
     RolService rolService;
-    @Autowired
+    final
     JwtProvider jwtProvider;
-    @Autowired
+    final
     RefreshTokenService refreshTokenService;
     @Value("${jwt.accessTokenCookieName}")
     private String accessTokenCookieName;
     @Value("${jwt.refreshTokenCookieName}")
     private String refreshTokenCookieName;
+
+    public AuthController(PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, UserService userService, RolService rolService, JwtProvider jwtProvider, RefreshTokenService refreshTokenService) {
+        this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.userService = userService;
+        this.rolService = rolService;
+        this.jwtProvider = jwtProvider;
+        this.refreshTokenService = refreshTokenService;
+    }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody NewUser newUser, BindingResult bindingResult) {

@@ -16,8 +16,12 @@ import java.util.List;
 @RequestMapping("/works")
 public class WorkController {
 
-    @Autowired
     WorkService workService;
+
+    @Autowired
+    public WorkController(WorkService workService) {
+        this.workService = workService;
+    }
 
     @GetMapping("")
     public ResponseEntity<List<Work>> getWorks(@RequestParam(required = false) String _sort,

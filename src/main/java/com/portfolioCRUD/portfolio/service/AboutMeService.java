@@ -11,6 +11,7 @@ public class AboutMeService implements IAboutMeService {
     final
     AboutMeRepository aboutMeRepository;
 
+    @Autowired
     public AboutMeService(AboutMeRepository aboutMeRepository) {
         this.aboutMeRepository = aboutMeRepository;
     }

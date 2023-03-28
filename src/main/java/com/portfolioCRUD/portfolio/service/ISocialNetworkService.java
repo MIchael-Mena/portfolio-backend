@@ -1,9 +1,11 @@
 package com.portfolioCRUD.portfolio.service;
 
 import com.portfolioCRUD.portfolio.model.SocialNetwork;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public interface ISocialNetworkService {
 
     List<SocialNetwork> getSocialNetworks();

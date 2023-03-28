@@ -16,12 +16,8 @@ import java.util.List;
 @RequestMapping("/socialNetworks")
 public class SocialNetworkController {
 
-    private SocialNetworkService socialNetworkService;
-
     @Autowired
-    public SocialNetworkController(SocialNetworkService socialNetworkService) {
-        this.socialNetworkService = socialNetworkService;
-    }
+    private SocialNetworkService socialNetworkService;
 
     ///socialNetworks?_sort=position&_order=asc
     @GetMapping("")

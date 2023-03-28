@@ -16,12 +16,8 @@ import java.util.List;
 @RequestMapping("/educations")
 public class EducationController {
 
-    EducationService educationService;
-
     @Autowired
-    public EducationController(EducationService educationService) {
-        this.educationService = educationService;
-    }
+    EducationService educationService;
 
     @GetMapping("")
     public ResponseEntity<List<Education>> getEducations(@RequestParam(required = false) String _sort,

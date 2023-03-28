@@ -8,8 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AboutMeService implements IAboutMeService {
 
-    final
-    AboutMeRepository aboutMeRepository;
+    final AboutMeRepository aboutMeRepository;
 
     @Autowired
     public AboutMeService(AboutMeRepository aboutMeRepository) {

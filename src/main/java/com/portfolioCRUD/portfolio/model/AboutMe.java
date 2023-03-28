@@ -7,10 +7,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/*@NoArgsConstructor
+@AllArgsConstructor*/
 @Getter @Setter
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 public class AboutMe {
 
     @Id
@@ -31,6 +31,15 @@ public class AboutMe {
     @Column(columnDefinition = "LONGTEXT")
     private String photo;
 
+    public AboutMe() {
+    }
+
+    public AboutMe(@NotNull String name, @NotNull String title, @NotNull String description, @NotNull String photo) {
+        this.name = name;
+        this.title = title;
+        this.description = description;
+        this.photo = photo;
+    }
 
 
 }

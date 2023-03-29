@@ -10,13 +10,13 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-//@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
+//@SpringBootApplication(exclude = {RepositoryRestMvcAutoConfiguration.class, DataSourceAutoConfiguration.class})
 @Configuration
 @ComponentScan(basePackages = {"com.portfolioCRUD.portfolio.*"})
 @EnableJpaRepositories(basePackages = {"com.portfolioCRUD.portfolio.*"})
 @EntityScan(basePackages = {"com.portfolioCRUD.portfolio.*"})
 @EnableAutoConfiguration
-@SpringBootApplication(exclude = {RepositoryRestMvcAutoConfiguration.class, DataSourceAutoConfiguration.class})
+@SpringBootApplication
 public class PortfolioApplication {
 
 

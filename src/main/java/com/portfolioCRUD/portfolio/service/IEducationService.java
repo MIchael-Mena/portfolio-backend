@@ -1,6 +1,7 @@
 package com.portfolioCRUD.portfolio.service;
 
 import com.portfolioCRUD.portfolio.model.Education;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 

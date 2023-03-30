@@ -1,6 +1,7 @@
 package com.portfolioCRUD.portfolio.service;
 
 import com.portfolioCRUD.portfolio.model.AboutMe;
+import org.springframework.stereotype.Service;
 
 public interface IAboutMeService {
 
@@ -11,6 +12,5 @@ public interface IAboutMeService {
     void createAboutMe(AboutMe aboutMe);
 
     Long countAboutMe();
-
 
 }

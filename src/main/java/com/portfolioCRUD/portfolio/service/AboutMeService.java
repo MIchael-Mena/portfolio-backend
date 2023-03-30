@@ -18,7 +18,7 @@ public class AboutMeService implements IAboutMeService {
 
     @Override
     public AboutMe getAboutMe() {
-        return (AboutMe) aboutMeRepository.findAll().get(0);
+        return aboutMeRepository.findAll().get(0);
     }
 
     @Override

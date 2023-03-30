@@ -3,7 +3,6 @@ package com.portfolioCRUD.portfolio.security;
 import com.portfolioCRUD.portfolio.security.jwt.JwtEntryPoint;
 import com.portfolioCRUD.portfolio.security.jwt.JwtTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -32,11 +31,6 @@ public class MainSecurity{
 
     @Autowired
     private JwtEntryPoint jwtEntryPoint;
-/*    @Value("${server.domain}")
-    private String domain;
-    @Value("${frontend.domain}")
-    private String frontendDomain;*/
-
     @Bean
     public JwtTokenFilter jwtTokenFilter() {
         return new JwtTokenFilter();
@@ -80,8 +74,9 @@ public class MainSecurity{
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("https://portfolio-99e5b.web.app/about","http://localhost:4200",
-                                "http://localhost:8080","portfolio-backend.portfolio.koyeb")
+                        .allowedOrigins("https://portfolio-99e5b.web.app","http://localhost:4200",
+                                "http://localhost:8080","portfolio-backend.portfolio.koyeb",
+                                "https://portfolio-spring-boot.onrender.com")
                         .allowedMethods("GET", "POST", "PUT", "DELETE","PATCH", "OPTIONS")
                         .allowedHeaders("Authorization", "Content-Type",
                                 "X-Requested-With", "accept", "Origin",

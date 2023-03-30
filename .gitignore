@@ -1,6 +1,6 @@
 HELP.md
 
-secrets.properties
+/src/main/resources/secrets.properties
 
 target/
 !.mvn/wrapper/maven-wrapper.jar

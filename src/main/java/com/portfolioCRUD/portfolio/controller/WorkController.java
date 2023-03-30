@@ -54,10 +54,10 @@ public class WorkController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteWork(@PathVariable Long id) {
+    public ResponseEntity<Message> deleteWork(@PathVariable Long id) {
 
         workService.deleteWork(id);
-        return ResponseEntity.ok("Work deleted");
+        return ResponseEntity.ok(new Message("Work deleted"));
     }
 
     @PreAuthorize("hasRole('ADMIN')")

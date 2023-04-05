@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.WebUtils;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -98,9 +99,8 @@ public class AuthController {
         UserResponse userResponse = new UserResponse(user.getId(), user.getUserName(),
                 user.getEmail(), userDetails.getAuthorities());
 
-        CookieUtil.create(response, accessTokenCookieName, jwt, false, -1, "/");
-        CookieUtil.create(response, refreshTokenCookieName, refreshToken.getToken(),
-                false, -1, "/auth");
+        CookieUtil.create(response, accessTokenCookieName, jwt, -1, "/");
+        CookieUtil.create(response, refreshTokenCookieName, refreshToken.getToken(), -1, "/auth");
 
 //        JwtDto jwtDto = new JwtDto(jwt, refreshToken.getToken(), userResponse, userDetails.getAuthorities());
 
@@ -161,8 +161,7 @@ public class AuthController {
                     System.out.println("userId: " + user.getId());
                     String token = jwtProvider.generateTokenFromUsername(user.getUserName());
 
-                    CookieUtil.create(response, accessTokenCookieName, token,
-                            false, -1, "/");
+                    CookieUtil.create(response, accessTokenCookieName, token, -1, "/");
                     return ResponseEntity.ok(new Message("Token refreshed successfully"));
                 })
                 .orElseThrow(() -> new TokenRefreshException("Refresh token",

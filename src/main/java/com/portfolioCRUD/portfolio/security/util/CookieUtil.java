@@ -11,9 +11,12 @@ public class CookieUtil {
     @Value("${server.domain}")
     private static String domain;
 
-    public static void create(HttpServletResponse res, String name, String value, boolean secure, int maxAge, String path) {
+    public static void create(HttpServletResponse res, String name, String value, int maxAge, String path) {
+        // Cookie debe ser secure = true (https), si no chrome no guarda el cookie.
+        // Igualmente chrome en modo incognito no guarda el cookie.
         Cookie cookie = new Cookie(name, value);
-        cookie.setSecure(secure);
+        cookie.setAttribute("SameSite", "None");
+        cookie.setSecure(true);
         cookie.setHttpOnly(true);
         cookie.setMaxAge(maxAge);
         cookie.setDomain(domain);
@@ -22,7 +25,7 @@ public class CookieUtil {
     }
 
     public static void clear(HttpServletResponse res, String name) {
-        create(res, name, "", false, 0, "/");
+        create(res, name, "", 0, "/");
     }
 
 }

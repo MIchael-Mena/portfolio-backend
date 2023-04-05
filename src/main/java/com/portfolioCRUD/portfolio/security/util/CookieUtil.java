@@ -13,6 +13,7 @@ public class CookieUtil {
 
     public static void create(HttpServletResponse res, String name, String value, boolean secure, int maxAge, String path) {
         Cookie cookie = new Cookie(name, value);
+        cookie.setAttribute("SameSite", "None");
         cookie.setSecure(secure);
         cookie.setHttpOnly(true);
         cookie.setMaxAge(maxAge);

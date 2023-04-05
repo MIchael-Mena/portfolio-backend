@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.WebUtils;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -131,7 +132,7 @@ public class AuthController {
                                           HttpServletRequest request) {
 //        @CookieValue(name = "refreshToken") String requestRefreshToken
         try {
-            String requestRefreshToken = WebUtils.getCookie(request, refreshTokenCookieName).getValue();
+            String requestRefreshToken = Objects.requireNonNull(WebUtils.getCookie(request, refreshTokenCookieName)).getValue();
             refreshTokenService.deleteByToken(requestRefreshToken);
             CookieUtil.clear(response, accessTokenCookieName);
             CookieUtil.clear(response, refreshTokenCookieName);

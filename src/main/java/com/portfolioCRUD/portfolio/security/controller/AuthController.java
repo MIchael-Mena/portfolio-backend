@@ -99,9 +99,8 @@ public class AuthController {
         UserResponse userResponse = new UserResponse(user.getId(), user.getUserName(),
                 user.getEmail(), userDetails.getAuthorities());
 
-        CookieUtil.create(response, accessTokenCookieName, jwt, true, -1, "/");
-        CookieUtil.create(response, refreshTokenCookieName, refreshToken.getToken(),
-                true, -1, "/auth");
+        CookieUtil.create(response, accessTokenCookieName, jwt, -1, "/");
+        CookieUtil.create(response, refreshTokenCookieName, refreshToken.getToken(), -1, "/auth");
 
 //        JwtDto jwtDto = new JwtDto(jwt, refreshToken.getToken(), userResponse, userDetails.getAuthorities());
 
@@ -132,7 +131,7 @@ public class AuthController {
                                           HttpServletRequest request) {
 //        @CookieValue(name = "refreshToken") String requestRefreshToken
         try {
-            String requestRefreshToken = Objects.requireNonNull(WebUtils.getCookie(request, refreshTokenCookieName)).getValue();
+            String requestRefreshToken = WebUtils.getCookie(request, refreshTokenCookieName).getValue();
             refreshTokenService.deleteByToken(requestRefreshToken);
             CookieUtil.clear(response, accessTokenCookieName);
             CookieUtil.clear(response, refreshTokenCookieName);
@@ -162,8 +161,7 @@ public class AuthController {
                     System.out.println("userId: " + user.getId());
                     String token = jwtProvider.generateTokenFromUsername(user.getUserName());
 
-                    CookieUtil.create(response, accessTokenCookieName, token,
-                            true, -1, "/");
+                    CookieUtil.create(response, accessTokenCookieName, token, -1, "/");
                     return ResponseEntity.ok(new Message("Token refreshed successfully"));
                 })
                 .orElseThrow(() -> new TokenRefreshException("Refresh token",

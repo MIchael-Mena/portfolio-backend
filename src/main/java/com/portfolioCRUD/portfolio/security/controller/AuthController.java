@@ -99,9 +99,9 @@ public class AuthController {
         UserResponse userResponse = new UserResponse(user.getId(), user.getUserName(),
                 user.getEmail(), userDetails.getAuthorities());
 
-        CookieUtil.create(response, accessTokenCookieName, jwt, false, -1, "/");
+        CookieUtil.create(response, accessTokenCookieName, jwt, true, -1, "/");
         CookieUtil.create(response, refreshTokenCookieName, refreshToken.getToken(),
-                false, -1, "/auth");
+                true, -1, "/auth");
 
 //        JwtDto jwtDto = new JwtDto(jwt, refreshToken.getToken(), userResponse, userDetails.getAuthorities());
 
@@ -163,7 +163,7 @@ public class AuthController {
                     String token = jwtProvider.generateTokenFromUsername(user.getUserName());
 
                     CookieUtil.create(response, accessTokenCookieName, token,
-                            false, -1, "/");
+                            true, -1, "/");
                     return ResponseEntity.ok(new Message("Token refreshed successfully"));
                 })
                 .orElseThrow(() -> new TokenRefreshException("Refresh token",

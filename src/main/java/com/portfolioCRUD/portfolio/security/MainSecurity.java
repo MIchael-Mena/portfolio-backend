@@ -23,6 +23,7 @@ import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+// TODO: implementar CommandLineRunner para eliminar los refresh tokens expirados
 
 @EnableMethodSecurity(securedEnabled = true)
 @Configuration

@@ -57,6 +57,7 @@ public class SocialNetworkController {
         socialNetworkToUpdate.setName(socialNetwork.getName());
         socialNetworkToUpdate.setLink(socialNetwork.getLink());
         socialNetworkToUpdate.setPosition(socialNetwork.getPosition());
+        socialNetworkToUpdate.setIcon(socialNetwork.getIcon());
         socialNetworkService.saveSocialNetwork(socialNetworkToUpdate);
         return ResponseEntity.ok(socialNetworkToUpdate);
     }

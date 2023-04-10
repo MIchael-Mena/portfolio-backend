@@ -14,13 +14,14 @@ public class CookieUtil {
     public static void create(HttpServletResponse res, String name, String value, int maxAge, String path) {
         // Cookie debe ser secure = true (https), si no chrome no guarda el cookie.
         // Igualmente chrome en modo incognito no guarda el cookie.
+        // Si estoy en localhost cambiar a false.
         Cookie cookie = new Cookie(name, value);
-        cookie.setAttribute("SameSite", "None");
         cookie.setSecure(true);
         cookie.setHttpOnly(true);
         cookie.setMaxAge(maxAge);
         cookie.setDomain(domain);
         cookie.setPath(path);
+        cookie.setAttribute("SameSite", "None");
         res.addCookie(cookie);
     }
 

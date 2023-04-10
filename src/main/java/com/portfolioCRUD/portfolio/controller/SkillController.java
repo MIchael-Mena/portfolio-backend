@@ -17,7 +17,7 @@ import java.util.List;
 public class SkillController {
 
     @Autowired
-    SkillService skillService;
+    private SkillService skillService;
 
     @GetMapping("")
     public ResponseEntity<List<Skill>> getSkill(@RequestParam(required = false) String _sort,
@@ -59,6 +59,7 @@ public class SkillController {
         skillToUpdate.setPosition(skill.getPosition());
         skillToUpdate.setIcon(skill.getIcon());
         skillService.saveSkill(skillToUpdate);
+        // saveSkill() le asigna un id al skill que se le pasa como parámetro
         return ResponseEntity.ok(skillToUpdate);
     }
 

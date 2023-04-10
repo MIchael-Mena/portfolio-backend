@@ -87,24 +87,28 @@ public class AuthController {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().body(new Message("Username or password incorrect"));
         }
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginUser.getUsername(), loginUser.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        try{
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginUser.getUsername(), loginUser.getPassword()));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String jwt = jwtProvider.generateToken(authentication);
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String jwt = jwtProvider.generateToken(authentication);
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        User user = this.getUser(loginUser.getUsername());
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
-        UserResponse userResponse = new UserResponse(user.getId(), user.getUserName(),
-                user.getEmail(), userDetails.getAuthorities());
+            User user = this.getUser(loginUser.getUsername());
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
+            UserResponse userResponse = new UserResponse(user.getId(), user.getUserName(),
+                    user.getEmail(), userDetails.getAuthorities());
 
-        CookieUtil.create(response, accessTokenCookieName, jwt, -1, "/");
-        CookieUtil.create(response, refreshTokenCookieName, refreshToken.getToken(), -1, "/auth");
+            CookieUtil.create(response, accessTokenCookieName, jwt, -1, "/");
+            CookieUtil.create(response, refreshTokenCookieName, refreshToken.getToken(), -1, "/auth");
 
-//        JwtDto jwtDto = new JwtDto(jwt, refreshToken.getToken(), userResponse, userDetails.getAuthorities());
+    //        JwtDto jwtDto = new JwtDto(jwt, refreshToken.getToken(), userResponse, userDetails.getAuthorities());
 
-        return ResponseEntity.ok( userResponse );
+            return ResponseEntity.ok( userResponse );
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new Message("Username or password incorrect"));
+        }
     }
 
     @GetMapping("/details")

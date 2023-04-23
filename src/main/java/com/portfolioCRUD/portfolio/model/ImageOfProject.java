@@ -25,10 +25,14 @@ public class ImageOfProject {
     @NotNull
     private String original;
     @NotNull
+    private String medium;
+    @NotNull
     private String thumbnail;
     @Column(length = 410)
     private String description;
     private Integer position;
+    @NotNull
+    private String deleteUrl;
 
 
 }

@@ -8,6 +8,7 @@ import com.portfolioCRUD.portfolio.security.entity.Rol;
 import com.portfolioCRUD.portfolio.security.entity.User;
 import com.portfolioCRUD.portfolio.security.enums.RolName;
 import com.portfolioCRUD.portfolio.security.jwt.JwtProvider;
+import com.portfolioCRUD.portfolio.security.service.ApiService;
 import com.portfolioCRUD.portfolio.security.service.RefreshTokenService;
 import com.portfolioCRUD.portfolio.security.service.RolService;
 import com.portfolioCRUD.portfolio.security.service.UserService;
@@ -31,7 +32,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.WebUtils;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -53,10 +53,14 @@ public class AuthController {
     JwtProvider jwtProvider;
     @Autowired
     RefreshTokenService refreshTokenService;
+    @Autowired
+    ApiService apiService;
     @Value("${jwt.accessTokenCookieName}")
     private String accessTokenCookieName;
     @Value("${jwt.refreshTokenCookieName}")
     private String refreshTokenCookieName;
+    @Value("${jwt.refresh.expiration}")
+    private int refreshTokenExpirationSeconds;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody NewUser newUser, BindingResult bindingResult) {
@@ -73,9 +77,13 @@ public class AuthController {
                 passwordEncoder.encode(newUser.getPassword()));
         Set<Rol> roles = new HashSet<>();
         roles.add(rolService.getByRolName(RolName.ROLE_USER).get());
-        if (newUser.getRoles().contains("admin")) {
-            roles.add(rolService.getByRolName(RolName.ROLE_ADMIN).get());
+        if(newUser.getRoles().contains("admin")) {
+            // No se puede crear un usuario con rol admin
+            return ResponseEntity.badRequest().body(new Message("Don't try to hack me"));
         }
+/*        if (newUser.getRoles().contains("admin")) {
+            roles.add(rolService.getByRolName(RolName.ROLE_ADMIN).get());
+        }*/
         user.setRoles(roles);
         userService.save(user);
         return ResponseEntity.ok(new Message("User created"));
@@ -98,10 +106,11 @@ public class AuthController {
             User user = this.getUser(loginUser.getUsername());
             RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
             UserResponse userResponse = new UserResponse(user.getId(), user.getUserName(),
-                    user.getEmail(), userDetails.getAuthorities());
+                    user.getEmail(), userDetails.getAuthorities(), apiService.getApiKey(user.getId()));
 
             CookieUtil.create(response, accessTokenCookieName, jwt, -1, "/");
-            CookieUtil.create(response, refreshTokenCookieName, refreshToken.getToken(), -1, "/auth");
+            CookieUtil.create(response, refreshTokenCookieName, refreshToken.getToken(),
+                    refreshTokenExpirationSeconds * 2, "/");
 
     //        JwtDto jwtDto = new JwtDto(jwt, refreshToken.getToken(), userResponse, userDetails.getAuthorities());
 
@@ -120,7 +129,7 @@ public class AuthController {
             // User contiene el password, no se debe devolver
             if (user.isPresent()) {
                 UserResponse userResponse = new UserResponse(user.get().getId(), user.get().getUserName(),
-                        user.get().getEmail(), userDetails.getAuthorities());
+                        user.get().getEmail(), userDetails.getAuthorities(), apiService.getApiKey(user.get().getId()));
                 return ResponseEntity.ok(userResponse);
             } else {
                 return ResponseEntity.badRequest().body(new Message("User not found"));
@@ -139,7 +148,8 @@ public class AuthController {
             refreshTokenService.deleteByToken(requestRefreshToken);
             CookieUtil.clear(response, accessTokenCookieName);
             CookieUtil.clear(response, refreshTokenCookieName);
-
+            return ResponseEntity.ok(new Message("Logout successful"));
+        } catch (NullPointerException e) {
             return ResponseEntity.ok(new Message("Logout successful"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new Message("Something went wrong"));

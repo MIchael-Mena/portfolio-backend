@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -43,9 +42,7 @@ public class ProjectController {
 
     private List<ProjectDTO> generateProjectsDTO(List<Project> projectList) {
         List<ProjectDTO> projectDTOList = new ArrayList<>();
-        projectList.forEach(project -> {
-            projectDTOList.add(this.getProjectDTO(project));
-        });
+        projectList.forEach(project -> projectDTOList.add(this.getProjectDTO(project)));
         return projectDTOList;
     }
 
@@ -86,37 +83,63 @@ public class ProjectController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Message> deleteProject(@PathVariable Long id) {
+        if (!this.projectService.existsProjectById(id)) {
+            return ResponseEntity.badRequest().body(new Message("Project not found"));
+        }
         this.imageOfProjectService.deleteImagesOfProjectByProjectId(id);
         this.projectService.deleteProject(id);
         return ResponseEntity.ok(new Message("Project deleted"));
+
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/edit/{id}")
     public ResponseEntity<Object> editProject(@PathVariable Long id, @NotBlank @Valid @RequestBody ProjectDTO projectDTO) {
+        if (!this.projectService.existsProjectById(id)) {
+            return ResponseEntity.badRequest().body(new Message("Project not found"));
+        }
         try {
-            // TODO: si projectDTO.getImages() no tiene id, genera un error. Pero previamente se modifica el proyecto
+            // Utilizo currentImages para comparar y eliminar las que no estén en projectDTO.getImages()
+            List<ImageOfProject> currentImages = this.imageOfProjectService.getImagesOfProjectByProjectId(id);
             Project project = this.projectService.findProject(id);
             this.saveProject(projectDTO, project);
-            // En este punto ya tenemos el id del proyecto creado
-            projectDTO.getImages().forEach(image -> {
-                ImageOfProject imageOfProject;
-                imageOfProject = this.imageOfProjectService.findImageOfProject(image.getId());
-                imageOfProject.setProject(project);
-                imageOfProject.setOriginal(image.getOriginal());
-                imageOfProject.setThumbnail(image.getThumbnail());
-                if (image.getDescription() != null) {
-                    imageOfProject.setDescription(image.getDescription());
-                }
-                if (image.getPosition() != null) {
-                    imageOfProject.setPosition(image.getPosition());
-                }
-                this.imageOfProjectService.saveImageOfProject(imageOfProject);
-            });
+            this.updateImages(projectDTO, currentImages, project);
+            this.deleteImages(currentImages);
             return ResponseEntity.ok(this.getProjectDTO(project));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new Message("Error: " + e.getMessage()));
         }
+    }
+
+    private void deleteImages(List<ImageOfProject> currentImages) {
+        currentImages.forEach(image -> this.imageOfProjectService.deleteImageOfProject(image.getId()));
+    }
+
+    private void updateImages(ProjectDTO projectDTO, List<ImageOfProject> currentImages, Project project) {
+        projectDTO.getImages().forEach(image -> {
+            ImageOfProject imageOfProject;
+            if(image.getId() == null) {
+                // Si el id es null, significa que es una nueva imagen
+                imageOfProject = new ImageOfProject();
+            } else {
+                imageOfProject = this.imageOfProjectService.findImageOfProject(image.getId());
+                currentImages.remove(imageOfProject);
+            }
+            imageOfProject.setProject(project);
+            imageOfProject.setOriginal(image.getOriginal());
+            imageOfProject.setMedium(image.getMedium());
+            imageOfProject.setThumbnail(image.getThumbnail());
+            if (image.getDescription() != null) {
+                imageOfProject.setDescription(image.getDescription());
+            }
+            if (image.getPosition() != null) {
+                imageOfProject.setPosition(image.getPosition());
+            }
+            if(image.getDeleteUrl() != null) {
+                imageOfProject.setDeleteUrl(image.getDeleteUrl());
+            }
+            this.imageOfProjectService.saveImageOfProject(imageOfProject);
+        });
     }
 
     private void saveProject(ProjectDTO projectDTO, Project project) {

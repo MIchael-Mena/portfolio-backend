@@ -37,4 +37,8 @@ public class ProjectService implements IProjectService {
         return this.projectRepository.findAll();
     }
 
+    public boolean existsProjectById(Long id) {
+        return this.projectRepository.existsById(id);
+    }
+
 }

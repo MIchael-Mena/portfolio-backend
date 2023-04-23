@@ -16,7 +16,7 @@ public class CookieUtil {
         // Igualmente chrome en modo incognito no guarda el cookie.
         // Si estoy en localhost cambiar a false.
         Cookie cookie = new Cookie(name, value);
-        cookie.setSecure(true);
+        cookie.setSecure(false);
         cookie.setHttpOnly(true);
         cookie.setMaxAge(maxAge);
         cookie.setDomain(domain);

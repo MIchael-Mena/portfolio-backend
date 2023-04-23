@@ -1,6 +1,7 @@
 package com.portfolioCRUD.portfolio.controller;
 
 import com.portfolioCRUD.portfolio.dto.Message;
+import com.portfolioCRUD.portfolio.dto.SkillName;
 import com.portfolioCRUD.portfolio.model.Skill;
 import com.portfolioCRUD.portfolio.service.SkillService;
 import lombok.NoArgsConstructor;
@@ -35,6 +36,10 @@ public class SkillController {
         return ResponseEntity.ok(skillService.findSkill(id));
     }
 
+    @GetMapping("/names")
+    public ResponseEntity<List<SkillName>> getSkillNames() {
+        return ResponseEntity.ok(skillService.getSkillNames());
+    }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")

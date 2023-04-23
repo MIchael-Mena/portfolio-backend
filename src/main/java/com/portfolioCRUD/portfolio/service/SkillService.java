@@ -1,5 +1,6 @@
 package com.portfolioCRUD.portfolio.service;
 
+import com.portfolioCRUD.portfolio.dto.SkillName;
 import com.portfolioCRUD.portfolio.model.Skill;
 import com.portfolioCRUD.portfolio.repository.SkillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,8 @@ public class SkillService implements ISkillService {
         return this.skillRepository.findAllByOrderByPositionAsc();
     }
 
-
+    public List<SkillName> getSkillNames() {
+        return this.skillRepository.selectAllNames();
+    }
 
 }

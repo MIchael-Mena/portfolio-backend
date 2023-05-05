@@ -2,8 +2,10 @@ package com.portfolioCRUD.portfolio.controller;
 
 import com.portfolioCRUD.portfolio.dto.Message;
 import com.portfolioCRUD.portfolio.dto.SkillName;
+import com.portfolioCRUD.portfolio.exception.ResourceNotFoundException;
 import com.portfolioCRUD.portfolio.model.Skill;
 import com.portfolioCRUD.portfolio.service.SkillService;
+import jakarta.validation.Valid;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +35,7 @@ public class SkillController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Skill> findSkill(@PathVariable Long id) {
+        this.checkResource(id, (!skillService.existsById(id)) );
         return ResponseEntity.ok(skillService.findSkill(id));
     }
 
@@ -43,22 +46,30 @@ public class SkillController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
-    public ResponseEntity<Skill> saveSkill(@RequestBody Skill skill) {
+    public ResponseEntity<Skill> saveSkill(@Valid @RequestBody Skill skill) {
         skillService.saveSkill(skill);
         return ResponseEntity.ok(skill);
+    }
+
+    private void checkResource(Long id, boolean condition) {
+        if (condition) {
+            throw new ResourceNotFoundException(id.toString());
+        }
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Message> deleteSkill(@PathVariable Long id) {
+        this.checkResource(id, (!skillService.existsById(id)) );
         skillService.deleteSkill(id);
         return ResponseEntity.ok(new Message("Skill deleted"));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/edit/{id}")
-    public ResponseEntity<Skill> editSkill(@PathVariable Long id, @RequestBody Skill skill) {
+    public ResponseEntity<Skill> editSkill(@PathVariable Long id, @Valid @RequestBody Skill skill) {
         Skill skillToUpdate = skillService.findSkill(id);
+        this.checkResource(id, (skillToUpdate == null) );
         skillToUpdate.setName(skill.getName());
         skillToUpdate.setLevel(skill.getLevel());
         skillToUpdate.setPosition(skill.getPosition());
@@ -72,6 +83,7 @@ public class SkillController {
     @PatchMapping("/update/{id}")
     public ResponseEntity<Skill> updateSkill(@PathVariable Long id, @RequestBody Skill skill) {
         Skill skillToUpdate = skillService.findSkill(id);
+        this.checkResource(id, (skillToUpdate == null) );
         if (skill.getName() != null) {
             skillToUpdate.setName(skill.getName());
         }

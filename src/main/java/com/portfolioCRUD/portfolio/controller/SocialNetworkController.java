@@ -1,8 +1,10 @@
 package com.portfolioCRUD.portfolio.controller;
 
 import com.portfolioCRUD.portfolio.dto.Message;
+import com.portfolioCRUD.portfolio.exception.ResourceNotFoundException;
 import com.portfolioCRUD.portfolio.model.SocialNetwork;
 import com.portfolioCRUD.portfolio.service.SocialNetworkService;
+import jakarta.validation.Valid;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,9 +33,15 @@ public class SocialNetworkController {
         return ResponseEntity.ok(socialNetworkService.getSocialNetworks());
     }
 
+    private void checkResource(Long id, boolean condition) {
+        if (condition) {
+            throw new ResourceNotFoundException(id.toString());
+        }
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
-    public ResponseEntity<SocialNetwork> saveSocialNetwork(@RequestBody SocialNetwork socialNetwork) {
+    public ResponseEntity<SocialNetwork> saveSocialNetwork(@Valid @RequestBody SocialNetwork socialNetwork) {
         socialNetworkService.saveSocialNetwork(socialNetwork);
         return ResponseEntity.ok(socialNetwork);
     }
@@ -41,19 +49,22 @@ public class SocialNetworkController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Message> deleteSocialNetwork(@PathVariable Long id) {
+        this.checkResource(id, (!socialNetworkService.existsById(id)) );
         socialNetworkService.deleteSocialNetwork(id);
         return ResponseEntity.ok(new Message("SocialNetwork deleted"));
     }
 
     @GetMapping("/{id}")
     public SocialNetwork findSocialNetwork(@PathVariable Long id) {
+        this.checkResource(id, (!socialNetworkService.existsById(id)) );
         return socialNetworkService.findSocialNetwork(id);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/edit/{id}")
-    public ResponseEntity<SocialNetwork> editSocialNetwork(@PathVariable Long id, @RequestBody SocialNetwork socialNetwork) {
+    public ResponseEntity<SocialNetwork> editSocialNetwork(@PathVariable Long id, @Valid @RequestBody SocialNetwork socialNetwork) {
         SocialNetwork socialNetworkToUpdate = socialNetworkService.findSocialNetwork(id);
+        this.checkResource(id, (socialNetworkToUpdate == null) );
         socialNetworkToUpdate.setName(socialNetwork.getName());
         socialNetworkToUpdate.setLink(socialNetwork.getLink());
         socialNetworkToUpdate.setPosition(socialNetwork.getPosition());
@@ -66,6 +77,7 @@ public class SocialNetworkController {
     @PatchMapping("/update/{id}")
     public ResponseEntity<SocialNetwork> updateSocialNetwork(@PathVariable Long id, @RequestBody SocialNetwork socialNetwork) {
         SocialNetwork socialNetworkToUpdate = socialNetworkService.findSocialNetwork(id);
+        this.checkResource(id, (socialNetworkToUpdate == null) );
         if (socialNetwork.getName() != null) {
             socialNetworkToUpdate.setName(socialNetwork.getName());
         }

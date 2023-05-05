@@ -1,6 +1,7 @@
 package com.portfolioCRUD.portfolio.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,18 +18,15 @@ public class AboutMe {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @NotNull
+    @Column(nullable = false)
     private String name;
-
-    @NotNull
+    @Column(nullable = false)
     private String title;
 
-    @NotNull
-    @Column(length = 410)
+    @Column(length = 410, nullable = false)
     private String description;
 
-    @NotNull
-    @Column(columnDefinition = "LONGTEXT")
+    @Column(columnDefinition = "LONGTEXT", nullable = false)
     private String photo;
 
 }

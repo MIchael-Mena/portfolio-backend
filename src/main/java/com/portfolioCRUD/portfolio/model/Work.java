@@ -1,6 +1,8 @@
 package com.portfolioCRUD.portfolio.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,22 +19,27 @@ public class Work {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @NotNull
+    @NotBlank
     @Column(nullable = false)
     private String job;
-
+    @NotNull
+    @NotBlank
     @Column(nullable = false)
     private String company;
 
     @Column(length = 410)
     private String description;
-
+    @NotNull
+    @NotBlank
     @Column(nullable = false, columnDefinition = "DATE")
     private String initialDate;
 
     @Column(columnDefinition = "DATE")
     private String finalDate;
     private String link;
-
+    @NotNull
+    @NotBlank
     @Column(nullable = false)
     private Integer position;
 

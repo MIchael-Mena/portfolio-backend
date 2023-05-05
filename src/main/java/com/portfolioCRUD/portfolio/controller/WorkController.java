@@ -1,8 +1,10 @@
 package com.portfolioCRUD.portfolio.controller;
 
 import com.portfolioCRUD.portfolio.dto.Message;
+import com.portfolioCRUD.portfolio.exception.ResourceNotFoundException;
 import com.portfolioCRUD.portfolio.model.Work;
 import com.portfolioCRUD.portfolio.service.WorkService;
+import jakarta.validation.Valid;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -47,23 +49,30 @@ public class WorkController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
-    public ResponseEntity<Work> saveWork(@RequestBody Work work) {
+    public ResponseEntity<Work> saveWork(@Valid @RequestBody Work work) {
         workService.saveWork(work);
         return ResponseEntity.ok(work);
+    }
+
+    private void checkResource(Long id, boolean condition) {
+        if (condition) {
+            throw new ResourceNotFoundException(id.toString());
+        }
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Message> deleteWork(@PathVariable Long id) {
-
+        this.checkResource(id, !workService.existsWork(id));
         workService.deleteWork(id);
         return ResponseEntity.ok(new Message("Work deleted"));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/edit/{id}")
-    public ResponseEntity<Message> editWork(@PathVariable Long id, @RequestBody Work work) {
+    public ResponseEntity<Message> editWork(@PathVariable Long id, @Valid @RequestBody Work work) {
         Work workToUpdate = workService.findWork(id);
+        this.checkResource(id, (workToUpdate == null));
         workToUpdate.setJob(work.getJob());
         workToUpdate.setCompany(work.getCompany());
         workToUpdate.setDescription(work.getDescription());
@@ -77,15 +86,20 @@ public class WorkController {
     @PatchMapping("/update/{id}")
     public ResponseEntity<Message> updateWork(@PathVariable Long id, @RequestBody Work work) {
         Work workToUpdate = workService.findWork(id);
+        this.checkResource(id, (workToUpdate == null));
         if (work.getJob() != null) {
             workToUpdate.setJob(work.getJob());
-        } else if (work.getCompany() != null) {
+        }
+        if (work.getCompany() != null) {
             workToUpdate.setCompany(work.getCompany());
-        } else if (work.getDescription() != null) {
+        }
+        if (work.getDescription() != null) {
             workToUpdate.setDescription(work.getDescription());
-        } else if (work.getLink() != null) {
+        }
+        if (work.getLink() != null) {
             workToUpdate.setLink(work.getLink());
-        } else if (work.getPosition() != null) {
+        }
+        if (work.getPosition() != null) {
             workToUpdate.setPosition(work.getPosition());
         }
         workService.saveWork(workToUpdate);

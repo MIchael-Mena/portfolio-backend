@@ -42,4 +42,8 @@ public class WorkService implements IWorkService {
     public Work findWork(Long id) {
         return workRepository.findById(id).orElse(null);
     }
+
+    public boolean existsWork(Long id) {
+        return workRepository.existsById(id);
+    }
 }

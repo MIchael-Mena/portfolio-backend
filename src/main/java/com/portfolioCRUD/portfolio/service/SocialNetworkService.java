@@ -42,5 +42,7 @@ public class SocialNetworkService implements ISocialNetworkService {
     }
 
 
-
+    public boolean existsById(Long id) {
+        return socialNetworkRepository.existsById(id);
+    }
 }

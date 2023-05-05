@@ -43,4 +43,7 @@ public class SkillService implements ISkillService {
         return this.skillRepository.selectAllNames();
     }
 
+    public boolean existsById(Long id) {
+        return this.skillRepository.existsById(id);
+    }
 }

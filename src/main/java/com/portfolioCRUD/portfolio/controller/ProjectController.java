@@ -2,6 +2,7 @@ package com.portfolioCRUD.portfolio.controller;
 
 import com.portfolioCRUD.portfolio.dto.Message;
 import com.portfolioCRUD.portfolio.dto.ProjectDTO;
+import com.portfolioCRUD.portfolio.exception.ResourceNotFoundException;
 import com.portfolioCRUD.portfolio.model.ImageOfProject;
 import com.portfolioCRUD.portfolio.model.Project;
 import com.portfolioCRUD.portfolio.service.ImageOfProjectService;
@@ -10,6 +11,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -69,7 +71,7 @@ public class ProjectController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
-    public ResponseEntity<ProjectDTO> createProject(@NotBlank @Valid @RequestBody ProjectDTO projectDTO) {
+    public ResponseEntity<ProjectDTO> createProject(@Valid @RequestBody ProjectDTO projectDTO) {
         Project project = new Project();
         this.saveProject(projectDTO, project);
         // En este punto ya tenemos el id del proyecto creado
@@ -80,12 +82,26 @@ public class ProjectController {
         return ResponseEntity.ok(this.getProjectDTO(project));
     }
 
+/*
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleValidationException(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getFieldErrors().forEach(error -> {
+            errors.put(error.getField(), error.getDefaultMessage());
+        });
+        return ResponseEntity.badRequest().body(errors);
+    }
+*/
+    private void checkResource(Long id, boolean condition) {
+        if (condition) {
+            throw new ResourceNotFoundException(id.toString());
+        }
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Message> deleteProject(@PathVariable Long id) {
-        if (!this.projectService.existsProjectById(id)) {
-            return ResponseEntity.badRequest().body(new Message("Project not found"));
-        }
+        this.checkResource(id, !this.projectService.existsProjectById(id));
         this.imageOfProjectService.deleteImagesOfProjectByProjectId(id);
         this.projectService.deleteProject(id);
         return ResponseEntity.ok(new Message("Project deleted"));
@@ -94,21 +110,15 @@ public class ProjectController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/edit/{id}")
-    public ResponseEntity<Object> editProject(@PathVariable Long id, @NotBlank @Valid @RequestBody ProjectDTO projectDTO) {
-        if (!this.projectService.existsProjectById(id)) {
-            return ResponseEntity.badRequest().body(new Message("Project not found"));
-        }
-        try {
-            // Utilizo currentImages para comparar y eliminar las que no estén en projectDTO.getImages()
-            List<ImageOfProject> currentImages = this.imageOfProjectService.getImagesOfProjectByProjectId(id);
-            Project project = this.projectService.findProject(id);
-            this.saveProject(projectDTO, project);
-            this.updateImages(projectDTO, currentImages, project);
-            this.deleteImages(currentImages);
-            return ResponseEntity.ok(this.getProjectDTO(project));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new Message("Error: " + e.getMessage()));
-        }
+    public ResponseEntity<Object> editProject(@PathVariable Long id, @Valid @RequestBody ProjectDTO projectDTO) {
+        this.checkResource(id, !this.projectService.existsProjectById(id));
+        // Utilizo currentImages para comparar y eliminar las que no estén en projectDTO.getImages()
+        List<ImageOfProject> currentImages = this.imageOfProjectService.getImagesOfProjectByProjectId(id);
+        Project project = this.projectService.findProject(id);
+        this.saveProject(projectDTO, project);
+        this.updateImages(projectDTO, currentImages, project);
+        this.deleteImages(currentImages);
+        return ResponseEntity.ok(this.getProjectDTO(project));
     }
 
     private void deleteImages(List<ImageOfProject> currentImages) {

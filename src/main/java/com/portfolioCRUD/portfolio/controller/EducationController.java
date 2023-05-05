@@ -1,8 +1,10 @@
 package com.portfolioCRUD.portfolio.controller;
 
 import com.portfolioCRUD.portfolio.dto.Message;
+import com.portfolioCRUD.portfolio.exception.ResourceNotFoundException;
 import com.portfolioCRUD.portfolio.model.Education;
 import com.portfolioCRUD.portfolio.service.EducationService;
+import jakarta.validation.Valid;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +19,7 @@ import java.util.List;
 public class EducationController {
 
     @Autowired
-    EducationService educationService;
+    private EducationService educationService;
 
     @GetMapping("")
     public ResponseEntity<List<Education>> getEducations(@RequestParam(required = false) String _sort,
@@ -47,7 +49,7 @@ public class EducationController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
-    public ResponseEntity<Education> saveEducation(@RequestBody Education education) {
+    public ResponseEntity<Education> saveEducation(@Valid @RequestBody Education education) {
         educationService.saveEducation(education);
         return ResponseEntity.ok(education);
     }
@@ -55,14 +57,16 @@ public class EducationController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Message> deleteEducation(@PathVariable Long id) {
+        this.checkResource(id, (!educationService.existsById(id)) );
         educationService.deleteEducation(id);
         return ResponseEntity.ok(new Message("Education deleted"));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/edit/{id}")
-    public ResponseEntity<Message> editEducation(@PathVariable Long id, @RequestBody Education education) {
+    public ResponseEntity<Object> editEducation(@PathVariable Long id, @Valid @RequestBody Education education) {
         Education educationToUpdate = educationService.findEducation(id);
+        this.checkResource(id, (educationToUpdate == null) );
         educationToUpdate.setTitle(education.getTitle());
         educationToUpdate.setInstitution(education.getInstitution());
         educationToUpdate.setInitialDate(education.getInitialDate());
@@ -72,19 +76,29 @@ public class EducationController {
         return ResponseEntity.ok(new Message("Education edited"));
     }
 
+    private void checkResource(Long id, boolean condition) {
+        if (condition) {
+            throw new ResourceNotFoundException(id.toString());
+        }
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/update/{id}")
     public ResponseEntity<Message> updateEducation(@PathVariable Long id, @RequestBody Education education) {
         Education educationToUpdate = educationService.findEducation(id);
+        this.checkResource(id, (educationToUpdate == null) );
         if (education.getTitle() != null) {
             educationToUpdate.setTitle(education.getTitle());
-        } else if (education.getInstitution() != null) {
+        }
+        if (education.getInstitution() != null) {
             educationToUpdate.setInstitution(education.getInstitution());
-        } else if (education.getInitialDate() != null) {
+        }
+        if (education.getInitialDate() != null) {
             educationToUpdate.setInitialDate(education.getInitialDate());
-        } else if (education.getFinalDate() != null) {
+        }if (education.getFinalDate() != null) {
             educationToUpdate.setFinalDate(education.getFinalDate());
-        } else if (education.getPosition() != null) {
+        }
+        if (education.getPosition() != null) {
             educationToUpdate.setPosition(education.getPosition());
         }
         educationService.saveEducation(educationToUpdate);

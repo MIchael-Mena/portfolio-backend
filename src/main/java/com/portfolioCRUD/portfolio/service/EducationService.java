@@ -43,4 +43,8 @@ public class EducationService implements IEducationService {
     public Education findEducation(Long id) {
         return educationRepository.findById(id).orElse(null);
     }
+
+    public boolean existsById(Long id) {
+        return educationRepository.existsById(id);
+    }
 }

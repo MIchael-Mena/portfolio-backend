@@ -164,9 +164,12 @@ public class AuthController {
 
     @GetMapping("/refresh-token")
     public ResponseEntity<Message> refreshToken(HttpServletResponse response, HttpServletRequest request) {
-        String requestRefreshToken = WebUtils.getCookie(request, refreshTokenCookieName).getValue();
-        if(requestRefreshToken == null) {
-            return ResponseEntity.badRequest().body(new Message("Refresh token is missing"));
+        String requestRefreshToken;
+        try {
+            requestRefreshToken = WebUtils.getCookie(request, refreshTokenCookieName).getValue();
+        } catch (NullPointerException e) {
+//            return ResponseEntity.badRequest().body(new Message("Refresh token is missing. Please login again"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new Message("Refresh token is missing. Please login again"));
         }
         return refreshTokenService.findByToken(requestRefreshToken)
                 .map(refreshTokenService::verifyExpiration)

@@ -100,6 +100,4 @@ public class SkillController {
         return ResponseEntity.ok(skillToUpdate);
     }
 
-
-
 }

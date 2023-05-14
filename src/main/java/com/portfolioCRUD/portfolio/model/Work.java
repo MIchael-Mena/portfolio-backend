@@ -20,26 +20,26 @@ public class Work {
     private long id;
 
     @NotNull
-    @NotBlank
     @Column(nullable = false)
     private String job;
+
     @NotNull
-    @NotBlank
     @Column(nullable = false)
     private String company;
 
     @Column(length = 410)
     private String description;
+
     @NotNull
-    @NotBlank
     @Column(nullable = false, columnDefinition = "DATE")
     private String initialDate;
 
     @Column(columnDefinition = "DATE")
     private String finalDate;
+
     private String link;
+
     @NotNull
-    @NotBlank
     @Column(nullable = false)
     private Integer position;
 

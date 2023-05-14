@@ -18,19 +18,15 @@ public class Skill {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @NotBlank
     @NotNull
     @Column(nullable = false, unique = true)
     private String name;
-    @NotBlank
     @NotNull
     @Column(nullable = false)
     private Integer level;
-    @NotBlank
     @NotNull
     @Column(nullable = false)
     private Integer position;
-    @NotBlank
     @NotNull
     @Column(nullable = false, columnDefinition = "LONGTEXT")
     private String icon;

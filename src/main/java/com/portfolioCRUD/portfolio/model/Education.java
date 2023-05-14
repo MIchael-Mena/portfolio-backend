@@ -19,22 +19,25 @@ public class Education {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @NotBlank
+
     @NotNull
     @Column(nullable = false)
     private String title;
+
     @Column(length = 410)
     private String description;
-    @NotBlank
+
     @NotNull
     @Column(nullable = false)
     private String institution;
-    @NotBlank
+
     @NotNull
     @Column(nullable = false, columnDefinition = "DATE")
     private String initialDate;
+
     @Column(columnDefinition = "DATE")
     private String finalDate;
+
     private String link;
 
     @Column(nullable = false)

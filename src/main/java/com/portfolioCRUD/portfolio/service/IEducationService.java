@@ -9,8 +9,6 @@ public interface IEducationService {
 
     List<Education> getEducations();
 
-    List<Education> getEducationsByOrderByPositionAsc();
-
     List<Education> getEducationsByOrderByInitialDateDesc();
 
     void saveEducation(Education education);

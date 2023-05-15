@@ -25,11 +25,7 @@ public class EducationController {
     public ResponseEntity<List<Education>> getEducations(@RequestParam(required = false) String _sort,
                                                          @RequestParam(required = false) String _order) {
         if (_sort != null && _order != null) {
-            if (_sort.equals("position") && _order.equals("asc")) {
-                return ResponseEntity.ok(educationService.getEducationsByOrderByPositionAsc());
-            } else if (_sort.equals("position") && _order.equals("desc")) {
-//                return ResponseEntity.ok(educationService.getEducationsByOrderByPositionDesc());
-            } else if (_sort.equals("initialDate") && _order.equals("asc")) {
+            if (_sort.equals("initialDate") && _order.equals("asc")) {
 //                return ResponseEntity.ok(educationService.getEducationsByOrderByInitialDateAsc());
             } else if (_sort.equals("initialDate") && _order.equals("desc")) {
                 return ResponseEntity.ok(educationService.getEducationsByOrderByInitialDateDesc());
@@ -71,7 +67,6 @@ public class EducationController {
         educationToUpdate.setInstitution(education.getInstitution());
         educationToUpdate.setInitialDate(education.getInitialDate());
         educationToUpdate.setFinalDate(education.getFinalDate());
-        educationToUpdate.setPosition(education.getPosition());
         educationService.saveEducation(educationToUpdate);
         return ResponseEntity.ok(new Message("Education edited"));
     }
@@ -97,9 +92,6 @@ public class EducationController {
             educationToUpdate.setInitialDate(education.getInitialDate());
         }if (education.getFinalDate() != null) {
             educationToUpdate.setFinalDate(education.getFinalDate());
-        }
-        if (education.getPosition() != null) {
-            educationToUpdate.setPosition(education.getPosition());
         }
         educationService.saveEducation(educationToUpdate);
         return ResponseEntity.ok(new Message("Education updated"));

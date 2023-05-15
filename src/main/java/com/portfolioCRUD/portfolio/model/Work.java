@@ -39,8 +39,4 @@ public class Work {
 
     private String link;
 
-    @NotNull
-    @Column(nullable = false)
-    private Integer position;
-
 }

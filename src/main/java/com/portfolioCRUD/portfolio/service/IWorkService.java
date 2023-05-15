@@ -9,8 +9,6 @@ public interface IWorkService {
 
     List<Work> getWorks();
 
-    List<Work> getWorksByOrderByPositionAsc();
-
     List<Work> getWorksByOrderByInitialDateDesc();
 
     void saveWork(Work work);

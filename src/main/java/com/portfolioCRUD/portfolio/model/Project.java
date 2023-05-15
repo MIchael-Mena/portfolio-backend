@@ -30,9 +30,9 @@ public class Project {
     @NotNull
     @Column(columnDefinition = "DATE")
     private String date;
+
     private String link;
     private String githubLink;
     private String technologies;
-//    private Integer position;
 
 }

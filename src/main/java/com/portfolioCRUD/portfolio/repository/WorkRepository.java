@@ -9,7 +9,6 @@ import java.util.List;
 @Repository
 public interface WorkRepository extends JpaRepository<Work, Long> {
 
-    List<Work> findAllByOrderByPositionAsc();
 
     //Fecha inicial de mayor a menor
     List<Work> findAllByOrderByInitialDateDesc();

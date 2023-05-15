@@ -40,7 +40,5 @@ public class Education {
 
     private String link;
 
-    @Column(nullable = false)
-    private Integer position;
 
 }

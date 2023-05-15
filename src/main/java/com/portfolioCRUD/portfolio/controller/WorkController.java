@@ -25,11 +25,7 @@ public class WorkController {
     public ResponseEntity<List<Work>> getWorks(@RequestParam(required = false) String _sort,
                                                @RequestParam(required = false) String _order) {
         if (_sort != null && _order != null) {
-            if (_sort.equals("position") && _order.equals("asc")) {
-                return ResponseEntity.ok(workService.getWorksByOrderByPositionAsc());
-            } else if (_sort.equals("position") && _order.equals("desc")) {
-//                return ResponseEntity.ok(workService.getWorksByOrderByPositionDesc());
-            } else if (_sort.equals("initialDate") && _order.equals("asc")) {
+            if (_sort.equals("initialDate") && _order.equals("asc")) {
 //                return ResponseEntity.ok(workService.getWorksByOrderByInitialDateAsc());
             } else if (_sort.equals("initialDate") && _order.equals("desc")) {
                 return ResponseEntity.ok(workService.getWorksByOrderByInitialDateDesc());
@@ -77,7 +73,6 @@ public class WorkController {
         workToUpdate.setCompany(work.getCompany());
         workToUpdate.setDescription(work.getDescription());
         workToUpdate.setLink(work.getLink());
-        workToUpdate.setPosition(work.getPosition());
         workService.saveWork(workToUpdate);
         return ResponseEntity.ok(new Message("Work edited"));
     }
@@ -98,9 +93,6 @@ public class WorkController {
         }
         if (work.getLink() != null) {
             workToUpdate.setLink(work.getLink());
-        }
-        if (work.getPosition() != null) {
-            workToUpdate.setPosition(work.getPosition());
         }
         workService.saveWork(workToUpdate);
         return ResponseEntity.ok(new Message("Work updated"));

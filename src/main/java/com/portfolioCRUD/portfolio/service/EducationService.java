@@ -20,11 +20,6 @@ public class EducationService implements IEducationService {
     }
 
     @Override
-    public List<Education> getEducationsByOrderByPositionAsc() {
-        return educationRepository.findAllByOrderByPositionAsc();
-    }
-
-    @Override
     public List<Education> getEducationsByOrderByInitialDateDesc() {
         return educationRepository.findAllByOrderByInitialDateDesc();
     }

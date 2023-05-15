@@ -1,6 +1,7 @@
 package com.portfolioCRUD.portfolio.controller;
 
 import com.portfolioCRUD.portfolio.dto.Message;
+import com.portfolioCRUD.portfolio.exception.InvalidFieldException;
 import com.portfolioCRUD.portfolio.model.AboutMe;
 import com.portfolioCRUD.portfolio.service.AboutMeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +32,19 @@ public class AboutMeController {
             this.aboutMeService.saveAboutMe(aboutMeToUpdate);
             return ResponseEntity.ok(new Message("About me updated"));
         } else {
-            return ResponseEntity.badRequest().body(new Message("You must provide at least one field to update"));
+            throw new InvalidFieldException("You must provide at least one field to update");
+//            return ResponseEntity.badRequest().body(new Message("You must provide at least one field to update"));
         }
     }
 
     private void updateAboutMeFields(AboutMe aboutMe, AboutMe aboutMeToUpdate) {
         if(aboutMe.getName() != null) {
+            byte[] photoBytes = aboutMe.getPhoto().getBytes();
+            int fileSizeInBytes = photoBytes.length;
+            double fileSizeInMegabytes = (double) fileSizeInBytes / (1024 * 1024);
+            if (fileSizeInMegabytes > 1) {
+                throw new InvalidFieldException("File size too large. Max file size: 1MB");
+            }
             aboutMeToUpdate.setName(aboutMe.getName());
         }
         if ( aboutMe.getDescription() != null) {

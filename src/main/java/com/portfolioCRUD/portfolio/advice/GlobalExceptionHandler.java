@@ -1,7 +1,7 @@
 package com.portfolioCRUD.portfolio.advice;
 
+import com.portfolioCRUD.portfolio.exception.InvalidFieldException;
 import com.portfolioCRUD.portfolio.exception.ResourceNotFoundException;
-import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -35,14 +35,25 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Object> handleNotFoundException(ResourceNotFoundException ex) {
+    public ResponseEntity<ErrorMessage> handleNotFoundException(ResourceNotFoundException ex) {
         ErrorMessage errorMessage = new ErrorMessage(
                 HttpStatus.NOT_FOUND.value(),
                 new Date(),
-                "Recurso no encontrado",
-                "El recurso con el ID " + ex.getMessage() + " no ha sido encontrado."
+                "Resource Not Found",
+                "The resource you are looking with the ID " + ex.getMessage() + " was not found."
         );
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+    }
+
+    @ExceptionHandler(InvalidFieldException.class)
+    public ResponseEntity<ErrorMessage> handleInvalidFieldException(InvalidFieldException ex) {
+        ErrorMessage errorMessage = new ErrorMessage(
+                HttpStatus.BAD_REQUEST.value(),
+                new Date(),
+                "Invalid Field",
+                ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
     }
 
 }

@@ -96,6 +96,8 @@ public class AuthController {
             return ResponseEntity.badRequest().body(new Message("Username or password incorrect"));
         }
         try{
+//            refreshTokenService.deleteByUserId(userService.getByUserName(loginUser.getUsername()).get().getId());
+
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginUser.getUsername(), loginUser.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -104,6 +106,10 @@ public class AuthController {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
             User user = this.getUser(loginUser.getUsername());
+
+//          Se eliminan los refresh tokens anteriores
+            refreshTokenService.deletePreviousRefreshTokens(user);
+
             RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
             UserResponse userResponse = new UserResponse(user.getId(), user.getUserName(),
                     user.getEmail(), userDetails.getAuthorities(), apiService.getApiKey(user.getId()));
@@ -150,17 +156,12 @@ public class AuthController {
             CookieUtil.clear(response, refreshTokenCookieName);
             return ResponseEntity.ok(new Message("Logout successful"));
         } catch (NullPointerException e) {
+//          Si quiere hacer logout sin estar logeado
             return ResponseEntity.ok(new Message("Logout successful"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new Message("Something went wrong"));
         }
     }
-
-/*    @GetMapping("/logout")
-    public ResponseEntity<Message> logout(@RequestParam Long userId) {
-        refreshTokenService.deleteByUserId(userId);
-        return ResponseEntity.ok(new Message("Logout successful"));
-    }*/
 
     @GetMapping("/refresh-token")
     public ResponseEntity<Message> refreshToken(HttpServletResponse response, HttpServletRequest request) {
@@ -168,36 +169,20 @@ public class AuthController {
         try {
             requestRefreshToken = WebUtils.getCookie(request, refreshTokenCookieName).getValue();
         } catch (NullPointerException e) {
-//            return ResponseEntity.badRequest().body(new Message("Refresh token is missing. Please login again"));
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new Message("Refresh token is missing. Please login again"));
         }
         return refreshTokenService.findByToken(requestRefreshToken)
                 .map(refreshTokenService::verifyExpiration)
                 .map(RefreshToken::getUser)
                 .map(user -> {
-                    System.out.println("userId: " + user.getId());
+//                    System.out.println("userId: " + user.getId());
                     String token = jwtProvider.generateTokenFromUsername(user.getUserName());
-
                     CookieUtil.create(response, accessTokenCookieName, token, -1, "/");
                     return ResponseEntity.ok(new Message("Token refreshed successfully"));
                 })
                 .orElseThrow(() -> new TokenRefreshException("Refresh token",
                         "Invalid or expired. Please issue a new login request"));
     }
-
-/*    @PostMapping("/refreshToken")
-    public ResponseEntity<?> refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
-        String requestRefreshToken = request.getRefreshToken();
-        return refreshTokenService.findByToken(requestRefreshToken)
-                .map(refreshTokenService::verifyExpiration)
-                .map(RefreshToken::getUser)
-                .map(user -> {
-                    String token = jwtProvider.generateTokenFromUsername(user.getUserName());
-                    return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
-                })
-                .orElseThrow(() -> new TokenRefreshException(requestRefreshToken,
-                        "Refresh token invalid or expired. Please issue a new request"));
-    }*/
 
     private User getUser(String username){
         return username.contains("@") ?

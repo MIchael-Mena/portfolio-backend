@@ -96,8 +96,6 @@ public class AuthController {
             return ResponseEntity.badRequest().body(new Message("Username or password incorrect"));
         }
         try{
-//            refreshTokenService.deleteByUserId(userService.getByUserName(loginUser.getUsername()).get().getId());
-
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginUser.getUsername(), loginUser.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);

@@ -22,7 +22,7 @@ public class Project {
     private String name;
 
     @NotNull
-    @Column(length = 410)
+    @Column(length = 601)
     private String description;
 
     @NotNull

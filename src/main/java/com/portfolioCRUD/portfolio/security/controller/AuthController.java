@@ -173,7 +173,6 @@ public class AuthController {
                 .map(refreshTokenService::verifyExpiration)
                 .map(RefreshToken::getUser)
                 .map(user -> {
-//                    System.out.println("userId: " + user.getId());
                     String token = jwtProvider.generateTokenFromUsername(user.getUserName());
                     CookieUtil.create(response, accessTokenCookieName, token, -1, "/");
                     return ResponseEntity.ok(new Message("Token refreshed successfully"));

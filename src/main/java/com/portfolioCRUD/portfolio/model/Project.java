@@ -7,8 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,7 +22,7 @@ public class Project {
     private String name;
 
     @NotNull
-    @Column(length = 410)
+    @Column(length = 601)
     private String description;
 
     @NotNull

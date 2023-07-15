@@ -33,7 +33,6 @@ public class AboutMeController {
             return ResponseEntity.ok(new Message("About me updated"));
         } else {
             throw new InvalidFieldException("You must provide at least one field to update");
-//            return ResponseEntity.badRequest().body(new Message("You must provide at least one field to update"));
         }
     }
 

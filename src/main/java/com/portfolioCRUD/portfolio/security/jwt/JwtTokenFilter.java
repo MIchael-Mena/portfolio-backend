@@ -43,8 +43,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
-        } catch (InvalidJwtException e) {
+        } /*catch (InvalidJwtException e) {
             // JwtEntryPoint
+            logger.error("Error al validar el token", e.getMessage());
             ErrorMessage errorMessage = new ErrorMessage(
                     e.getStatusCode(),
                     new Date(),
@@ -54,11 +55,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             res.setStatus(errorMessage.getStatusCode());
             res.setContentType("application/json");
             res.getWriter().write(new ObjectMapper().writeValueAsString(errorMessage));
-        }
-        /*catch (Exception e) {
+        }*/
+        catch (Exception e) {
             logger.error("Fail en el método doFilterInternal" + e.getMessage());
             res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
-        }*/
+        }
         filterChain.doFilter(req, res);
     }
 

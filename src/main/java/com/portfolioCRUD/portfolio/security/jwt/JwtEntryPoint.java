@@ -26,7 +26,9 @@ public class JwtEntryPoint implements AuthenticationEntryPoint {
         // se enviará el 401 Unauthorized por encima de cualquier otro error (por ejemplo un json mal formado o un recurso no encontrado).
         if(response.getStatus() == HttpServletResponse.SC_OK){
             // Si el usuario no está autenticado y quiere acceder a un recurso protegido
+            logger.error("El usuario no está autenticado");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            logger.error("El usuario no está autenticado");
         }
         logger.error("Fail en el método commence");
     }

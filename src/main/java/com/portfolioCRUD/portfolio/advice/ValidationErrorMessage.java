@@ -1,8 +1,11 @@
 package com.portfolioCRUD.portfolio.advice;
 
+import lombok.Getter;
+
 import java.util.Date;
 import java.util.List;
 
+@Getter
 public class ValidationErrorMessage extends ErrorMessage {
     private List<String> errors;
 
@@ -11,7 +14,4 @@ public class ValidationErrorMessage extends ErrorMessage {
         this.errors = errors;
     }
 
-    public List<String> getErrors() {
-        return errors;
-    }
 }

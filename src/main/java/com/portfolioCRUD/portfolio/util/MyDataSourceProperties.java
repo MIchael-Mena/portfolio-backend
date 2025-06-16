@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "spring.datasource")
 public class MyDataSourceProperties {
 
-    private String url;
+    private String  url;
     private String username;
     private String password;
 

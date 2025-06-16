@@ -32,5 +32,4 @@ public class ProjectDTO {
     @NotNull
     private List<ImageOfProject> images;
 
-
 }
